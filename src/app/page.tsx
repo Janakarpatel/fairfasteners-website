@@ -1,15 +1,14 @@
+'use client';
+
+import Navbar from '@/components/Navbar';
+
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <nav className="border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <h1 className="text-2xl font-bold text-gray-900">Company Name</h1>
-        </div>
-      </nav>
+    <div className="min-h-screen bg-[#FAFAFA]">
+      <Navbar />
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
+      {/* <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center">
           <h2 className="text-5xl font-bold text-gray-900 mb-6">
             Welcome to Our Company
@@ -21,10 +20,10 @@ export default function Home() {
             More content will be added soon...
           </p>
         </div>
-      </section>
+      </section> */}
 
       {/* Content Section */}
-      <section className="max-w-7xl mx-auto px-6 py-16 bg-gray-50">
+      {/* <section className="max-w-7xl mx-auto px-6 py-16 bg-gray-50">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="p-6">
             <h3 className="text-xl font-semibold text-gray-900 mb-3">Section 1</h3>
@@ -45,16 +44,16 @@ export default function Home() {
             </p>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 bg-white">
+      {/* <footer className="border-t border-gray-200 bg-white">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <p className="text-gray-600 text-center">
             © 2026 Company Name. All rights reserved.
           </p>
         </div>
-      </footer>
+      </footer> */}
     </div>
   );
 }
