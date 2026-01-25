@@ -26,8 +26,9 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&family=Geist:wght@100..900&display=swap" rel="stylesheet" />
       </head>
       <body className={geist.className}>
-        <SmoothScroll />
-        {children}
+        <SmoothScroll>
+          {children}
+        </SmoothScroll>
       </body>
     </html>
   );
