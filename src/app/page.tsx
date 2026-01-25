@@ -1,13 +1,15 @@
 'use client';
 
 import Navbar from '@/components/Navbar';
+import Hero from '@/components/Hero';
+import Footer from '@/components/Footer';
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-[#FAFAFA]">
       <Navbar />
-
-      {/* Hero Section */}
+      <Hero />
+      <Footer />
       {/* <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center">
           <h2 className="text-5xl font-bold text-gray-900 mb-6">
