@@ -3,12 +3,17 @@
 import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Footer from '@/components/Footer';
+import HeroVideoBackdrop from '@/components/HeroVideoBackdrop';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-brand-surface">
-      <Navbar />
-      <Hero />
+    <div className="min-h-screen">
+      {/* First viewport: shared video (or static) behind navbar + hero */}
+      <div className="relative min-h-[100dvh] w-full">
+        <HeroVideoBackdrop />
+        <Navbar />
+        <Hero />
+      </div>
       <Footer />
       {/* <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center">
