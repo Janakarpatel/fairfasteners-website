@@ -1,29 +1,52 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --brand-primary: #1D4646;
+  /* Brand palette */
+  --brand-primary: #0c393e;
+  --brand-surface: #f2f2f2;
+  --brand-secondary: #1f2f3e;
+  --brand-primary-hover: color-mix(in srgb, var(--brand-primary) 82%, black);
+
+  --background: var(--brand-surface);
+  --foreground: var(--brand-secondary);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-brand-primary: var(--brand-primary);
+  --color-brand-surface: var(--brand-surface);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-primary-hover: var(--brand-primary-hover);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-serif: var(--font-arimo);
+  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: var(--brand-secondary);
+    --foreground: var(--brand-surface);
   }
+}
+
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
