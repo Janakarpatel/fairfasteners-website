@@ -1,37 +1,65 @@
 'use client';
 
+import { motion, useReducedMotion } from 'motion/react';
+
 export default function Hero() {
-    return (
-        <section 
-            className="w-full relative overflow-hidden flex items-center"
-            style={{
-                backgroundImage: 'url(/images/frame_1.png)',
-                backgroundSize: 'cover',
-                // backgroundPosition: '120% center',
-                backgroundAttachment: 'fixed',
-                height: 'calc(100vh - 80px)',
-                // minHeight: '400px'
+  const reduce = useReducedMotion();
+
+  return (
+    <section className="relative flex min-h-[calc(100dvh-4rem)] w-full flex-col justify-end overflow-hidden bg-brand-surface px-6 pb-15 pt-2 font-sans">
+      <motion.div
+        className="mx-auto w-full max-w-[1600px] shrink-0"
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: reduce ? 1 : 0 },
+          visible: {
+            opacity: 1,
+            transition: reduce
+              ? { duration: 0 }
+              : { staggerChildren: 0.11, delayChildren: 0.12 },
+          },
+        }}
+      >
+        <div className="flex max-w-full flex-col items-start gap-6">
+          <motion.p
+            className="max-w-lg text-normal font-medium leading-relaxed tracking-tight text-brand-secondary"
+            variants={{
+              hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 20 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: {
+                  duration: reduce ? 0 : 3,
+                  ease: [0.16, 1, 0.3, 1],
+                },
+              },
             }}
-        >
-            {/* Dark overlay for text readability */}
-            <div className="absolute inset-0"></div>
-            
-            <div className="max-w-7xl mx-3 px-6 md:px-10 relative z-10">
-                <div className="w-3/4">
-                    {/* Text Content */}
-                    <h1 className="text-6xl md:text-5xl font-bold text-brand-primary mb-3 tracking-tight">
-                        Embrace the reality of Engineering to create our future. 
-                    </h1>
-                    <p className="text-lg md:text-xl text-brand-primary mb-8 tracking-tight">
-                        We provide high-quality fasteners including rivets, bolts, and screws for industrial and commercial applications. Our products are engineered for reliability and durability.
-                    </p>
-                    {/* <div className="flex gap-4">
-                        <button className="border-2 border-white hover:bg-white/10 text-white font-semibold px-8 py-3 rounded-lg transition">
-                            Learn More
-                        </button>
-                    </div> */}
-                </div>
-            </div>
-        </section>
-    );
+          >
+            Fair Fasteners supplies high-performance rivets, bolts, screws, and specialty hardware
+            across North America—engineered for demanding industrial environments and long-term
+            reliability in the field.
+          </motion.p>
+          <motion.h1
+            className="text-[clamp(2.75rem,8vw,6.5rem)] leading-[0.95] tracking-tighter text-brand-secondary"
+            variants={{
+              hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 28 },
+              visible: {
+                opacity: 1,
+                y: 0,
+                transition: {
+                  duration: reduce ? 0 : 3,
+                  ease: [0.16, 1, 0.3, 1],
+                },
+              },
+            }}
+          >
+            Industrial strength,
+            <br />
+            every connection.
+          </motion.h1>
+        </div>
+      </motion.div>
+    </section>
+  );
 }
