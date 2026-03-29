@@ -4,6 +4,7 @@ import Hero from '@/components/Hero';
 import Footer from '@/components/Footer';
 import HeroVideoBackdrop from '@/components/HeroVideoBackdrop';
 import HomeValueSection from '@/components/HomeValueSection';
+import SolutionsWorkSection from '@/components/SolutionsWorkSection';
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
         <Hero />
       </div>
       <HomeValueSection />
+      <SolutionsWorkSection />
       <Footer />
       {/* <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center">

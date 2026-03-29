@@ -17,14 +17,14 @@ export default function HomeValueSection() {
     },
   ] as const;
 
-  const rule = 'border-brand-surface/35';
+  const rule = 'border-brand-secondary/35';
 
   return (
-    <section className="flex min-h-screen flex-col bg-brand-primary font-sans">
+    <section className="flex min-h-screen flex-col bg-brand-surface font-sans">
       <div className="flex min-h-0 flex-1 flex-col">
         {/* Headline — natural height */}
         <div className="max-w-5xl shrink-0 px-6 py-8 md:px-8 lg:px-10">
-          <h2 className="text-3xl font-normal leading-tighter tracking-tight mt-20 text-brand-surface md:text-4xl lg:text-5xl">
+          <h2 className="text-3xl font-normal leading-tighter tracking-tight mt-20 text-brand-secondary md:text-4xl lg:text-5xl">
             From precision hardware to dependable supply, Fair Fasteners delivers what
             professionals need for assemblies that last.
           </h2>
@@ -44,14 +44,14 @@ export default function HomeValueSection() {
               } `}
             >
               <div
-                className="pointer-events-none absolute inset-0 origin-right scale-x-0 bg-brand-surface transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 motion-reduce:duration-0 motion-reduce:group-hover:scale-x-100"
+                className="pointer-events-none absolute inset-0 origin-right scale-x-0 bg-brand-primary transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-x-100 motion-reduce:duration-0 motion-reduce:group-hover:scale-x-100"
                 aria-hidden
               />
               <div className="relative z-10 flex min-h-0 flex-col px-6 py-12 md:py-14 lg:px-10">
-                <h3 className="text-sm font-normal font-jetbrains uppercase tracking-normal text-brand-surface/80 transition-colors duration-300 ease-out group-hover:text-brand-secondary motion-reduce:transition-colors">
+                <h3 className="text-sm font-normal font-jetbrains uppercase tracking-normal text-brand-secondary/80 transition-colors duration-300 ease-out group-hover:text-brand-surface motion-reduce:transition-colors">
                   0{i + 1}. {title}
                 </h3>
-                <p className="mt-6 text-[0.9375rem] leading-snug text-brand-surface/90 transition-colors duration-300 ease-out group-hover:text-brand-secondary/90 md:text-base md:leading-relaxed motion-reduce:transition-colors">
+                <p className="mt-6 text-[0.9375rem] leading-snug text-brand-secondary/90 transition-colors duration-300 ease-out group-hover:text-brand-surface/90 md:text-base md:leading-relaxed motion-reduce:transition-colors">
                   {body}
                 </p>
               </div>

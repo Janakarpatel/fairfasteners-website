@@ -2,14 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-
-const navLinks = [
-  { href: '#', label: 'Products' },
-  { href: '#', label: 'Solutions' },
-  { href: '#', label: 'Sustainability' },
-  { href: '#', label: 'Company' },
-  { href: '#', label: 'News' },
-] as const;
+import { Menu, X } from 'lucide-react';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 const SCROLL_TOP_THRESHOLD = 72;
@@ -17,40 +10,103 @@ const SCROLL_DELTA_DOWN = 8;
 const SCROLL_DELTA_UP = 2;
 const IDLE_HIDE_MS = 4500;
 
-function BracketContact({
-  className = '',
-  inverse,
-}: {
-  className?: string;
-  inverse?: boolean;
-}) {
+type NavChild = { href: string; label: string };
+type NavSection = { href: string; label: string; children?: readonly NavChild[] };
+
+const navSections: readonly NavSection[] = [
+  {
+    href: '#',
+    label: 'Products',
+    children: [
+      { href: '#', label: 'Rivets & bolts' },
+      { href: '#', label: 'Screws & threaded' },
+      { href: '#', label: 'Nuts, washers & kits' },
+    ],
+  },
+  {
+    href: '#',
+    label: 'Solutions',
+    children: [
+      { href: '#', label: 'Commercial programs' },
+      { href: '#', label: 'OEM & custom runs' },
+    ],
+  },
+  { href: '#', label: 'Sustainability' },
+  { href: '#', label: 'Company' },
+  { href: '#', label: 'News' },
+] as const;
+
+function BracketContact({ className = '' }: { className?: string }) {
   return (
     <button
       type="button"
-      className={`group inline-flex items-center border-l border-r px-2.5 py-1 text-sm font-medium tracking-tight transition-opacity ${
-        inverse
-          ? 'border-white text-white hover:opacity-80'
-          : 'border-brand-secondary text-brand-secondary hover:text-brand-primary'
-      } ${className}`}
+      className={`inline-flex items-center border border-brand-primary bg-brand-surface px-10 py-2 text-sm font-medium tracking-tight text-brand-secondary transition-colors hover:bg-brand-primary hover:text-brand-surface ${className}`}
     >
-      <span className="mx-2.5 font-medium tracking-tight">Contact Us</span>
+      <span className="tracking-normal text-md">Get Started</span>
     </button>
   );
 }
 
+function MenuOpenButton({
+  onClick,
+  expanded,
+  className = '',
+}: {
+  onClick: () => void;
+  expanded: boolean;
+  className?: string;
+}) {
+  return (
+    <motion.button
+      type="button"
+      onClick={onClick}
+      className={`group inline-flex items-center justify-center border border-brand-primary bg-brand-surface px-3 py-2 text-sm font-medium tracking-tight text-brand-secondary transition-colors hover:text-brand-primary ${className}`}
+      aria-expanded={expanded}
+      aria-controls="site-mega-menu"
+      aria-label={expanded ? 'Close menu' : 'Open menu'}
+    >
+      <AnimatePresence initial={false} mode="wait">
+        {expanded ? (
+          <motion.span
+            key="icon-close"
+            initial={{ opacity: 0, rotate: -90, scale: 0.9 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: 90, scale: 0.9 }}
+            transition={{ duration: 0.22, ease }}
+            className="inline-flex"
+          >
+            <X
+              aria-hidden
+              className="h-5 w-5 text-brand-secondary/70 transition-colors group-hover:text-brand-primary"
+              strokeWidth={1.75}
+            />
+          </motion.span>
+        ) : (
+          <motion.span
+            key="icon-menu"
+            initial={{ opacity: 0, rotate: 90, scale: 0.9 }}
+            animate={{ opacity: 1, rotate: 0, scale: 1 }}
+            exit={{ opacity: 0, rotate: -90, scale: 0.9 }}
+            transition={{ duration: 0.22, ease }}
+            className="inline-flex"
+          >
+            <Menu
+              aria-hidden
+              className="h-5 w-5 text-brand-secondary/70 transition-colors group-hover:text-brand-primary"
+              strokeWidth={1.75}
+            />
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </motion.button>
+  );
+}
+
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [scrollHidden, setScrollHidden] = useState(false);
   const lastY = useRef(0);
   const reduce = useReducedMotion();
-  /** Difference blend needs light ink (white) to invert correctly over the video. */
-  const blendNav = reduce !== true;
-
-  const linkClass = blendNav
-    ? 'mix-blend-difference text-sm font-medium tracking-tight text-white transition-opacity hover:opacity-80'
-    : 'text-sm font-medium tracking-tight text-brand-secondary transition-colors hover:text-brand-primary';
-
-  const barClass = blendNav ? 'bg-white' : 'bg-brand-secondary';
 
   useEffect(() => {
     lastY.current = typeof window !== 'undefined' ? window.scrollY : 0;
@@ -106,145 +162,235 @@ export default function Navbar() {
     };
   }, [reduce]);
 
-  const navHidden = scrollHidden && !isOpen && reduce !== true;
+  useEffect(() => {
+    if (!menuOpen) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [menuOpen]);
 
-  /** Hide via `top` only — `transform`/`opacity` on ancestors break `mix-blend-mode` over the hero video. */
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [menuOpen]);
+
+  const navHidden = scrollHidden && !menuOpen && reduce !== true;
+
+  const panelTransition = reduce
+    ? { duration: 0 }
+    : { duration: 0.55, ease };
+  const backdropTransition = reduce ? { duration: 0 } : { duration: 0.35, ease };
+
+  const navTop = navHidden ? '-200px' : '0px';
+  const navTransition = reduce
+    ? undefined
+    : `top 300ms cubic-bezier(${ease[0]}, ${ease[1]}, ${ease[2]}, ${ease[3]})`;
+
   return (
-    <motion.nav
-      className="fixed left-0 right-0 z-50 bg-transparent font-sans"
-      initial={false}
-      animate={{
-        top: navHidden ? '-220px' : '0px',
-      }}
-      transition={{ duration: 0.3, ease }}
-      style={{
-        pointerEvents: navHidden ? 'none' : 'auto',
-        isolation: 'auto',
-      }}
-    >
-      <div className="relative flex w-full max-w-none items-center justify-between gap-3 px-6 py-6">
-        <div className="relative z-10 flex min-w-0 flex-1 items-center gap-8 lg:gap-10 xl:gap-11">
-          <div className="shrink-0 mix-blend-normal">
+    <>
+      <nav
+        className="fixed left-0 right-0 top-0 z-[110] border-b border-transparent bg-transparent font-sans"
+        style={{
+          top: navTop,
+          transition: navTransition,
+          pointerEvents: navHidden ? 'none' : 'auto',
+        }}
+      >
+        <div className="relative flex w-full max-w-none items-center justify-between gap-4 px-6 py-6 md:px-8">
+          <a href="/" className="shrink-0 outline-none ring-brand-primary focus-visible:ring-2">
             <img
               src="/company_logo.png"
               alt="Fair Fasteners"
               className="h-7 w-auto object-contain md:h-8"
             />
+          </a>
+
+          <div className="flex shrink-0 items-center gap-3">
+            <BracketContact className="hidden sm:inline-flex" />
+            <MenuOpenButton expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)} />
           </div>
-          <ul className="hidden min-w-0 items-center gap-2 lg:flex lg:gap-8">
-            {navLinks.map(({ href, label }) => (
-              <li key={label} className="shrink-0">
-                <a href={href} className={linkClass}>
-                  {label}
-                </a>
-              </li>
-            ))}
-          </ul>
         </div>
+      </nav>
 
-        <div
-          className={`relative z-10 flex shrink-0 items-center justify-end gap-4 ${
-            blendNav ? 'mix-blend-difference' : ''
-          }`}
-        >
-          <BracketContact
-            className="hidden lg:inline-flex"
-            inverse={blendNav}
-          />
-          <motion.button
-            type="button"
-            onClick={() => setIsOpen(!isOpen)}
-            className="flex h-10 w-10 flex-col items-center justify-center gap-1.5 lg:hidden"
-            aria-expanded={isOpen}
-            aria-label={isOpen ? 'Close menu' : 'Open menu'}
-            whileTap={reduce ? undefined : { scale: 0.92 }}
-          >
-            <motion.span
-              className={`h-0.5 w-6 ${barClass}`}
-              animate={
-                isOpen
-                  ? { rotate: 45, y: 8, transition: { duration: 0.3, ease } }
-                  : { rotate: 0, y: 0, transition: { duration: 0.3, ease } }
-              }
+      <AnimatePresence>
+        {menuOpen && (
+          <>
+            <motion.button
+              type="button"
+              key="mega-backdrop"
+              className="fixed inset-0 z-[90] bg-brand-secondary/70 backdrop-blur-md"
+              aria-label="Close menu"
+              initial={{ opacity: reduce ? 1 : 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: reduce ? 1 : 0 }}
+              transition={backdropTransition}
+              onClick={() => setMenuOpen(false)}
             />
-            <motion.span
-              className={`h-0.5 w-6 ${barClass}`}
-              animate={
-                isOpen
-                  ? { opacity: 0, transition: { duration: 0.2 } }
-                  : { opacity: 1, transition: { duration: 0.2 } }
-              }
-            />
-            <motion.span
-              className={`h-0.5 w-6 ${barClass}`}
-              animate={
-                isOpen
-                  ? { rotate: -45, y: -8, transition: { duration: 0.3, ease } }
-                  : { rotate: 0, y: 0, transition: { duration: 0.3, ease } }
-              }
-            />
-          </motion.button>
-        </div>
-      </div>
 
-      <AnimatePresence initial={false}>
-        {isOpen && (
-          <motion.div
-            key="mobile-nav"
-            initial={reduce ? false : { opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={reduce ? undefined : { opacity: 0, height: 0 }}
-            transition={{ duration: reduce ? 0 : 0.35, ease }}
-            className={`overflow-hidden border-t lg:hidden ${
-              blendNav ? 'border-white/25' : 'border-brand-secondary/10'
-            }`}
-          >
-            <div className="px-4 py-3">
-              <ul className="flex flex-col gap-1">
-                {navLinks.map(({ href, label }, i) => (
-                  <motion.li
-                    key={label}
-                    initial={reduce ? false : { opacity: 0, x: -12 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{
-                      duration: reduce ? 0 : 0.35,
-                      ease,
-                      delay: reduce ? 0 : 0.04 + i * 0.04,
-                    }}
-                  >
+            <motion.div
+              id="site-mega-menu"
+              key="mega-panel"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Site menu"
+              className="fixed inset-y-0 right-0 z-[100] flex w-full max-w-full flex-col border-l border-brand-secondary/12 bg-brand-surface/95 shadow-[-12px_0_48px_rgba(15,23,42,0.08)] backdrop-blur-xl sm:max-w-[min(100%,640px)] md:max-w-[min(100%,820px)] lg:max-w-[62vw] xl:max-w-[920px]"
+              initial={{ x: reduce ? 0 : '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: reduce ? 0 : '100%' }}
+              transition={panelTransition}
+            >
+              <div className="min-h-0 flex-1 overflow-hidden pt-[88px] sm:pt-[96px] md:pt-[104px]">
+                <div className="grid h-full grid-cols-1 divide-y divide-brand-secondary/12 md:grid-cols-3 md:divide-x md:divide-y-0">
+                  {/* Column 1 — Navigation */}
+                  <div className="flex flex-col overflow-hidden px-6 py-7 md:px-8 md:py-8">
+                    <p className="font-jetbrains text-[0.65rem] uppercase tracking-[0.14em] text-brand-secondary/50">
+                      Navigation
+                    </p>
+                    <div className="mt-6 space-y-10">
+                      {navSections.map(({ href, label, children }) => (
+                        <div key={label}>
+                          <a
+                            href={href}
+                            className="block text-xl font-medium tracking-tight text-brand-primary md:text-2xl md:leading-snug"
+                            onClick={() => setMenuOpen(false)}
+                          >
+                            {label}
+                          </a>
+                          {children && children.length > 0 && (
+                            <ul className="mt-4 space-y-2 border-l border-brand-secondary/15 pl-4">
+                              {children.map((c) => (
+                                <li key={c.label}>
+                                  <a
+                                    href={c.href}
+                                    className="group flex items-start gap-2 text-sm font-medium text-brand-secondary transition-colors hover:text-brand-primary"
+                                    onClick={() => setMenuOpen(false)}
+                                  >
+                                    <span
+                                      className="mt-0.5 font-jetbrains text-xs text-brand-secondary/45"
+                                      aria-hidden
+                                    >
+                                      ↳
+                                    </span>
+                                    {c.label}
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Column 2 — Spotlight */}
+                  <div className="flex flex-col overflow-hidden px-6 py-7 md:px-8 md:py-8">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <p className="font-jetbrains text-[0.65rem] uppercase tracking-[0.14em] text-brand-secondary/50">
+                        Latest
+                      </p>
+                      <a
+                        href="#"
+                        className="font-jetbrains text-[0.65rem] uppercase tracking-[0.12em] text-brand-secondary underline-offset-4 transition-colors hover:text-brand-primary hover:underline"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        Newsroom ↗
+                      </a>
+                    </div>
+                    <div className="mt-7 space-y-7">
+                      <article className="space-y-3">
+                        <p className="font-jetbrains text-[0.65rem] uppercase tracking-wider text-brand-secondary/45">
+                          Company · March 2026
+                        </p>
+                        <p className="text-sm leading-relaxed text-brand-secondary">
+                          Expanding coated-fastener capacity for regulated industrial
+                          programs.
+                        </p>
+                        <a
+                          href="#"
+                          className="inline-block text-sm font-medium text-brand-primary underline decoration-brand-primary/30 underline-offset-4 transition-colors hover:decoration-brand-primary"
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          Read more
+                        </a>
+                      </article>
+                      <article className="space-y-3 border-t border-brand-secondary/10 pt-7 [@media(max-height:780px)]:hidden">
+                        <p className="font-jetbrains text-[0.65rem] uppercase tracking-wider text-brand-secondary/45">
+                          Supply chain · Q1 2026
+                        </p>
+                        <p className="text-sm leading-relaxed text-brand-secondary">
+                          How distributors shorten lead times with audited sourcing and
+                          documentation packs.
+                        </p>
+                        <a
+                          href="#"
+                          className="inline-block text-sm font-medium text-brand-primary underline decoration-brand-primary/30 underline-offset-4 transition-colors hover:decoration-brand-primary"
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          Learn more
+                        </a>
+                      </article>
+                    </div>
+                  </div>
+
+                  {/* Column 3 — Overview */}
+                  <div className="flex flex-col overflow-hidden px-6 py-7 md:px-8 md:py-8">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <p className="font-jetbrains text-[0.65rem] uppercase tracking-[0.14em] text-brand-secondary/50">
+                        Offerings
+                      </p>
+                      <a
+                        href="#"
+                        className="font-jetbrains text-[0.65rem] uppercase tracking-[0.12em] text-brand-secondary underline-offset-4 transition-colors hover:text-brand-primary hover:underline"
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        View all ↗
+                      </a>
+                    </div>
+                    <p className="mt-7 text-sm leading-relaxed text-brand-secondary md:text-[0.9375rem] md:leading-[1.65]">
+                      Fair Fasteners supports commercial builders, OEMs, and industrial
+                      teams with specification-grade hardware, traceable sourcing, and
+                      responsive technical support—from quote through installation.
+                    </p>
                     <a
-                      href={href}
-                      className={
-                        blendNav
-                          ? 'block py-2 text-sm font-medium tracking-wide text-white mix-blend-difference hover:opacity-80'
-                          : 'block py-2 text-sm font-medium tracking-wide text-brand-secondary hover:text-brand-primary'
-                      }
-                      onClick={() => setIsOpen(false)}
+                      href="#"
+                      className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-brand-primary transition-colors hover:text-brand-primary-hover"
+                      onClick={() => setMenuOpen(false)}
                     >
-                      {label}
+                      <span className="font-jetbrains text-xs text-brand-secondary/45" aria-hidden>
+                        ↳
+                      </span>
+                      Contact our team
                     </a>
-                  </motion.li>
-                ))}
-              </ul>
-              <motion.div
-                className={
-                  blendNav
-                    ? 'mt-3 border-t border-white/25 pt-3'
-                    : 'mt-3 border-t border-brand-secondary/10 pt-3'
-                }
-                initial={reduce ? false : { opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: reduce ? 0 : 0.15, duration: reduce ? 0 : 0.3 }}
-              >
-                <BracketContact
-                  className="w-full justify-center"
-                  inverse={blendNav}
-                />
-              </motion.div>
-            </div>
-          </motion.div>
+                    <div className="mt-8 hidden border border-brand-secondary/10 bg-brand-surface p-4 sm:block [@media(max-height:780px)]:hidden">
+                      <p className="font-jetbrains text-[0.6rem] uppercase tracking-wider text-brand-secondary/45">
+                        Quick line
+                      </p>
+                      <p className="mt-2 text-xs leading-relaxed text-brand-secondary/80">
+                        Need a drawing reviewed or a material substitution? Our
+                        engineers help you stay compliant without slowing the job site.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-brand-secondary/12 px-6 py-5 md:px-10">
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <p className="text-center text-xs text-brand-secondary/50 sm:text-left">
+                      © {new Date().getFullYear()} Fair Fasteners
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </>
   );
 }
