@@ -1,0 +1,33 @@
+---
+description: Fair Fasteners site — brand, stack, layout, and UX conventions
+alwaysApply: true
+---
+
+# Fair Fasteners — project context
+
+## Stack
+- Next.js App Router (`src/app`), React 19, Tailwind v4 (`@import "tailwindcss"` in `globals.css`), TypeScript.
+- **Fonts:** Geist via `next/font/google` on `<html>` (`--font-geist-sans`, `--font-geist-mono`) + `Geist` className on `<body>`; primary brand typeface is Geist.
+- **Motion:** `npm install motion` — import from **`motion/react`** (same API as Framer Motion). Use **`useReducedMotion()`**; when true, skip or zero-out durations / hover springs.
+- **Scroll:** Lenis in `SmoothScroll` wrapper in `layout.tsx`.
+- **Optional 3D:** `@splinetool/react-spline` with dynamic `ssr: false`; scene URL `NEXT_PUBLIC_SPLINE_SCENE_URL` (`.splinecode` URL) if a Spline hero background is used.
+
+## Brand palette (`globals.css` → Tailwind)
+- **`--brand-primary`:** `#0c393e` — CTAs, accents, hover targets (`bg-brand-primary`, `text-brand-primary`, `hover:bg-brand-primary-hover`).
+- **`--brand-surface`:** `#f2f2f2` — page/hero background (`bg-brand-surface`).
+- **`--brand-secondary`:** `#1f2f3e` — body text default, footer background (`bg-brand-secondary`).
+- **`--brand-primary-hover`:** `color-mix` darker primary for buttons.
+- **`--background` / `--foreground`:** tied to surface + secondary in light mode; flip in `prefers-color-scheme: dark`.
+
+## Global UX
+- **Scrollbars hidden** on `html` and `body` (`scrollbar-width: none`, `::-webkit-scrollbar { display: none }`) — scrolling still works.
+
+## Layout / UI conventions
+- **Navbar:** Transparent background; logo + flat nav links grouped **left** (Products, Solutions, Sustainability, Company, News); **Contact** as bracket-style control on the right; mobile hamburger + animated panel (`AnimatePresence`). Tight edge padding has been requested (`px-1 py-1` era); confirm with current `Navbar.tsx`.
+- **Hero:** Full-viewport feel with **`min-h-[calc(100dvh-4rem)]`** (reserve ~4rem for navbar — avoids bottom text clipped when navbar is in flow). Content **`justify-end`**, intro paragraph then large **two-line** headline; **`px-6`** horizontal padding; use valid Tailwind only (avoid invalid utilities like `pb-15`, `text-normal`).
+- **Footer:** **`bg-brand-secondary`** with white / `white/80` text.
+- **Animations:** Prefer slower, eased motion (`ease` ~ `[0.16, 1, 0.3, 1]`); staggered hero; navbar load + mobile menu; footer `whileInView` + column stagger. Soften springs for buttons/links (lower stiffness).
+
+## Code style (user preferences)
+- Focused diffs; match existing patterns; prefer citations and clear prose in replies.
+- Run commands in the real environment; use authoritative project paths when possible.

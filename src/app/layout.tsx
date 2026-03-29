@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import Navbar from "@/components/Navbar";
 import SmoothScroll from "@/components/SmoothScroll";
 import "./globals.css";
 
@@ -36,9 +37,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} ${jetbrainsMono.variable}`}
     >
       <body className={`${geistSans.className} font-sans antialiased`}>
-        <SmoothScroll>
-          {children}
-        </SmoothScroll>
+        <Navbar />
+        <SmoothScroll>{children}</SmoothScroll>
       </body>
     </html>
   );

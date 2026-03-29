@@ -6,7 +6,7 @@ export default function Hero() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative z-10 flex min-h-[calc(100dvh-5rem)] w-full flex-col justify-end px-6 pb-10 pt-2 font-sans">
+    <section className="relative z-10 flex min-h-[calc(100dvh-5rem)] w-full flex-col justify-end px-6 pt-2 font-sans">
       <motion.div
         className="mx-auto w-full max-w-[1600px] shrink-0"
         initial="hidden"
@@ -23,7 +23,7 @@ export default function Hero() {
       >
         <div className="flex max-w-full flex-col items-start gap-6">
           <motion.p
-            className="max-w-2xl text-sm font-normal leading-relaxed tracking-tight text-brand-secondary"
+            className="max-w-lg text-sm font-normal leading-relaxed tracking-tight text-brand-surface"
             variants={{
               hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 20 },
               visible: {
@@ -41,7 +41,7 @@ export default function Hero() {
             reliability in the field.
           </motion.p>
           <motion.h1
-            className="text-[clamp(2.75rem,8vw,6.5rem)] leading-[0.95] tracking-tighter text-brand-secondary"
+            className="text-[clamp(2.75rem,8vw,6.5rem)] leading-[0.95] tracking-tighter text-brand-surface"
             variants={{
               hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 28 },
               visible: {

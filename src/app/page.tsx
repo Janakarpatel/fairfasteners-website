@@ -1,9 +1,9 @@
 'use client';
 
-import Navbar from '@/components/Navbar';
 import Hero from '@/components/Hero';
 import Footer from '@/components/Footer';
 import HeroVideoBackdrop from '@/components/HeroVideoBackdrop';
+import HomeValueSection from '@/components/HomeValueSection';
 
 export default function Home() {
   return (
@@ -11,9 +11,9 @@ export default function Home() {
       {/* First viewport: shared video (or static) behind navbar + hero */}
       <div className="relative min-h-[100dvh] w-full">
         <HeroVideoBackdrop />
-        <Navbar />
         <Hero />
       </div>
+      <HomeValueSection />
       <Footer />
       {/* <section className="max-w-7xl mx-auto px-6 py-20">
         <div className="text-center">
