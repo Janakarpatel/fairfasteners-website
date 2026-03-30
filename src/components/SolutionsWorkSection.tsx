@@ -12,29 +12,44 @@
    image?: string;
  };
  
- const tiles: readonly Tile[] = [
-   {
-     title: 'Infrastructure',
-     kicker: 'Construction, MEP, civil, utilities',
-     image: '/images/solutions/infrastructure.jpg',
-   },
-   {
-     title: 'Manufacturing',
-     kicker: 'OEM lines, tooling, maintenance',
-     image: '/images/solutions/manufacturing.jpg',
-   },
-   {
-     title: 'Transport',
-     kicker: 'Fleet, heavy equipment, service bays',
-     image: '/images/solutions/transport.jpg',
-   },
- ] as const;
+const tiles: readonly Tile[] = [
+  {
+    title: 'Infrastructure',
+    kicker: 'Construction, MEP, civil, utilities',
+    image: '/images/infrastructure.jpg',
+  },
+  {
+    title: 'Manufacturing',
+    kicker: 'OEM lines, tooling, maintenance',
+    image: '/images/manufacturing.jpg',
+  },
+  {
+    title: 'Transport',
+    kicker: 'Fleet, heavy equipment, service bays',
+    image: '/images/transport.jpg',
+  },
+  {
+    title: 'Energy',
+    kicker: 'Power generation, renewables, oil & gas',
+    image: '/images/energy.jpg',
+  },
+  {
+    title: 'Marine',
+    kicker: 'Shipbuilding, ports, corrosive environments',
+    image: '/images/marine.jpg',
+  },
+  {
+    title: 'Agriculture',
+    kicker: 'Farm machinery, implements, seasonal repairs',
+    image: '/images/agriculture.jpg',
+  }
+] as const;
  
  function TileCard({ title, kicker, image }: Tile) {
    return (
     <div
       data-tile-card
-       className="group relative aspect-[16/9] w-[84vw] shrink-0 snap-center overflow-hidden border border-white/10 bg-black/20 sm:w-[64vw] md:w-[560px] lg:w-[680px]"
+      className="group relative aspect-[3/4] w-[min(84vw,272px)] shrink-0 snap-center overflow-hidden border border-white/10 bg-black/20 sm:w-[min(70vw,304px)] md:w-[320px] lg:w-[352px] xl:w-[min(376px,34vw)]"
     >
        <div className="absolute inset-0" aria-hidden>
          <div
@@ -50,7 +65,7 @@
        </div>
  
        <div className="relative flex h-full flex-col justify-between p-6 md:p-7">
-         <p className="font-jetbrains text-[0.65rem] uppercase tracking-[0.14em] text-white/75">
+         <p className="font-jetbrains text-[0.7rem] uppercase tracking-[0.14em] text-white/75 md:text-[0.75rem]">
            {kicker}
          </p>
          <div className="flex items-end justify-between gap-4">
@@ -74,12 +89,14 @@
     const el = railRef.current;
     if (!el) return;
     const card = el.querySelector<HTMLElement>('[data-tile-card]');
-    const step = (card?.offsetWidth ?? 420) + 24;
+    const gap =
+      typeof window !== 'undefined' && window.matchMedia('(min-width: 768px)').matches ? 32 : 24;
+    const step = (card?.offsetWidth ?? 352) + gap;
     el.scrollBy({ left: dir * step, behavior: reduce ? 'auto' : 'smooth' });
   };
  
    return (
-    <section className="min-h-screen bg-brand-secondary font-sans">
+    <section className="min-h-screen bg-brand-primary">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 py-20 md:px-8 lg:px-10">
          <motion.div
            initial={reduce ? false : { opacity: 0, y: 12 }}
@@ -88,8 +105,8 @@
            transition={{ duration: reduce ? 0 : 0.7, ease }}
           className="mx-auto max-w-3xl text-center"
          >
-          <h2 className="text-4xl font-normal leading-[1.05] tracking-tight text-brand-surface md:text-6xl">
-             Where our <span className="text-brand-warm">solutions</span> work
+          <h2 className="text-5xl font-jetbrains leading-[1.05] tracking-tight text-brand-surface">
+             Where our solutions work
            </h2>
           <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-brand-surface/70 md:text-base">
              Fair Fasteners supports teams across demanding environments—helping keep assemblies
@@ -128,7 +145,7 @@
 
             <div
               ref={railRef}
-              className="flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto overscroll-x-contain scroll-smooth px-6 pb-2 [scrollbar-width:none] md:gap-6 md:px-8 lg:px-10 [&::-webkit-scrollbar]:hidden"
+              className="flex snap-x snap-mandatory items-stretch gap-6 overflow-x-auto overscroll-x-contain scroll-smooth px-6 pb-2 [scrollbar-width:none] md:gap-8 md:px-8 lg:px-10 [&::-webkit-scrollbar]:hidden"
             >
               {tiles.map((t) => (
                 <TileCard key={t.title} {...t} />
