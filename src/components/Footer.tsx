@@ -6,11 +6,10 @@ import { motion, useReducedMotion } from 'motion/react';
 const ease = [0.16, 1, 0.3, 1] as const;
 
 const discoverLinks = [
-  { href: '#', label: 'Products' },
+  { href: '/products', label: 'Products' },
   { href: '#', label: 'Solutions' },
-  { href: '#', label: 'Sustainability' },
   { href: '#', label: 'Company' },
-  { href: '#', label: 'News' },
+  { href: '/news', label: 'News' },
 ] as const;
 
 export default function Footer() {

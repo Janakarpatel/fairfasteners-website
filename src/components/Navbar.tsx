@@ -15,7 +15,7 @@ type NavSection = { href: string; label: string; children?: readonly NavChild[] 
 
 const navSections: readonly NavSection[] = [
   {
-    href: '#',
+    href: '/products',
     label: 'Products',
     children: [
       { href: '#', label: 'Rivets & bolts' },
@@ -31,9 +31,8 @@ const navSections: readonly NavSection[] = [
       { href: '#', label: 'OEM & custom runs' },
     ],
   },
-  { href: '#', label: 'Sustainability' },
   { href: '#', label: 'Company' },
-  { href: '#', label: 'News' },
+  { href: '/news', label: 'News' },
 ] as const;
 
 function BracketContact({ className = '' }: { className?: string }) {

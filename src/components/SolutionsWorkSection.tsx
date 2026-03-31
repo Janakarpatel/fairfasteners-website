@@ -131,10 +131,10 @@ export default function SolutionsWorkSection() {
     <section className="min-h-screen bg-brand-primary">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col px-6 py-20 md:px-8 lg:px-10">
         <div className="mx-auto max-w-3xl text-center">
-          <h2 className="text-5xl font-jetbrains leading-[1.05] tracking-tight text-brand-surface">
+          <h2 className="text-5xl leading-[1.05] tracking-tight text-brand-surface">
             Where our solutions work
           </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-brand-surface/70 md:text-base">
+          <p className="mx-auto mt-5 max-w-6xl text-sm font-sans font-light leading-relaxed text-brand-surface/70 md:text-base">
             Fair Fasteners supports teams across demanding environments—helping keep assemblies
             compliant, consistent, and install-ready from quote through field use.
           </p>

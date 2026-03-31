@@ -1,0 +1,92 @@
+[
+  {
+    "id": "infrastructure-bridge-retrofit-2026",
+    "slug": "bridge-retrofit-standardize-corrosion-class-fasteners",
+    "title": "Bridge retrofit crews standardize corrosion-class fasteners",
+    "excerpt": "On multi-phase bridge rehabilitation, crews reduced rework by standardizing bolt grades, coatings, and documentation packages across subcontractors.",
+    "date": "2026-03-18",
+    "field": "Infrastructure",
+    "tags": ["corrosion", "documentation", "standardization"],
+    "image": "/images/infrastructure.jpg",
+    "body": [
+      "Bridge rehabilitation programs often span multiple phases and multiple contractors, which makes small inconsistencies expensive. When one crew substitutes a grade or coating to keep moving, the next inspection cycle can turn that substitution into a rework event.",
+      "For this retrofit, the project team aligned on a single fastener schedule for structural connections: defined grades, protective finishes by exposure zone, and documentation requirements that matched the drawing package. Hardware was supplied with consistent labeling so installers could verify selection without slowing down the workfront.",
+      "The outcome was fewer field substitutions and clearer inspection sign-off. By standardizing early and keeping the paperwork attached to the parts, the team reduced avoidable friction between procurement, installation, and quality control—especially when crews rotated between phases."
+    ]
+  },
+  {
+    "id": "manufacturing-oem-line-changeover-2026",
+    "slug": "oem-line-changeovers-faster-with-kitted-hardware",
+    "title": "OEM line changeovers get faster with kitted hardware",
+    "excerpt": "A mid-volume OEM minimized downtime by receiving kitted, labeled fasteners aligned to torque specs and assembly drawings—ready for each station.",
+    "date": "2026-03-08",
+    "field": "Manufacturing",
+    "tags": ["kitting", "torque", "oem"],
+    "image": "/images/manufacturing.jpg",
+    "body": [
+      "During changeovers, production teams lose time hunting for the right hardware and validating it against drawings. Even when the part is “close enough,” the verification step pulls attention away from throughput and increases the risk of mixed lots on the floor.",
+      "In this line, fasteners were delivered as station-ready kits: labeled by assembly step, matched to the torque and joint requirements, and packaged to reduce handling. The goal wasn’t just convenience—it was repeatability across shifts and faster onboarding for new operators.",
+      "With kitted hardware, the team reduced the number of decision points on the line. The result was smoother changeovers, fewer interruptions for verification, and less variation in installation quality from one run to the next."
+    ]
+  },
+  {
+    "id": "transport-fleet-service-bays-2026",
+    "slug": "fleet-service-bays-cut-turnaround-time-critical-repairs",
+    "title": "Fleet service bays cut turnaround time on critical repairs",
+    "excerpt": "With consistent availability of high-wear hardware, a fleet maintenance program improved repair throughput and reduced parts substitutions.",
+    "date": "2026-02-24",
+    "field": "Transport",
+    "tags": ["availability", "maintenance", "uptime"],
+    "image": "/images/transport.jpg",
+    "body": [
+      "Fleet maintenance teams face a constant trade-off: keep vehicles moving today or wait for the exact part tomorrow. Hardware substitutions can get the job done in the moment, but they can also create recurring issues—especially when corrosion, vibration, and repeated service cycles are involved.",
+      "For this program, the service bays standardized a core set of high-wear fasteners and kept them consistently available. The emphasis was on predictable replenishment and reducing the frequency of “close enough” swaps that complicate future repairs.",
+      "By simplifying selection and improving availability, technicians spent less time sourcing and more time repairing. Turnaround improved without sacrificing consistency, and follow-up work driven by avoidable substitutions decreased."
+    ]
+  },
+  {
+    "id": "energy-wind-turbine-nacelle-2026",
+    "slug": "wind-turbine-nacelle-work-stays-compliant-in-weather-windows",
+    "title": "Wind turbine nacelle work stays compliant under harsh weather windows",
+    "excerpt": "Teams used documented, spec-matched hardware to keep installs audit-ready while working within short access windows and changing conditions.",
+    "date": "2026-02-11",
+    "field": "Energy",
+    "tags": ["compliance", "renewables", "weather-windows"],
+    "image": "/images/energy.jpg",
+    "body": [
+      "Renewable maintenance is often scheduled around access windows—weather, availability of lift equipment, and site constraints. When the window opens, teams need to execute quickly without sacrificing compliance or traceability.",
+      "In this nacelle workflow, hardware was supplied with documentation aligned to the site’s requirements: spec match confirmation, consistent packaging, and clear identification. That made it easier to verify correctness before ascent and avoid delays once the work began.",
+      "The team kept installations audit-ready while still moving at the speed required by the site schedule. The biggest gains came from reducing last-minute uncertainty: fewer part checks in the field and fewer decisions made under time pressure."
+    ]
+  },
+  {
+    "id": "marine-port-equipment-corrosion-2026",
+    "slug": "port-equipment-upgrades-prioritize-corrosion-resistance",
+    "title": "Port equipment upgrades prioritize corrosion resistance",
+    "excerpt": "In coastal environments, selecting the right stainless grades and protective finishes helped extend service intervals for critical assemblies.",
+    "date": "2026-01-29",
+    "field": "Marine",
+    "tags": ["stainless", "finishes", "coastal"],
+    "image": "/images/marine.jpg",
+    "body": [
+      "Ports are rough on hardware. Salt exposure, washdown routines, and constant vibration accelerate corrosion and make future disassembly harder than it should be.",
+      "For these upgrades, teams focused on corrosion resistance first: selecting appropriate stainless grades and finishes by location and exposure, and aligning that choice with the expected service intervals. The goal was not only longer life but also predictable maintenance—fewer seized connections and fewer surprises during teardown.",
+      "By treating corrosion as a design constraint rather than an afterthought, the program improved reliability in the most failure-prone areas and reduced downtime associated with replacement and rework."
+    ]
+  },
+  {
+    "id": "agriculture-seasonal-repairs-2026",
+    "slug": "seasonal-equipment-repairs-stay-on-schedule-with-fast-restock",
+    "title": "Seasonal equipment repairs stay on schedule with fast restock",
+    "excerpt": "A repair network reduced seasonal bottlenecks by keeping core SKUs consistent and restocking quickly when demand spikes hit.",
+    "date": "2026-01-12",
+    "field": "Agriculture",
+    "tags": ["restock", "seasonal", "service"],
+    "image": "/images/agriculture.jpg",
+    "body": [
+      "Seasonal demand creates a simple constraint: repairs that miss the window cost money immediately. When fasteners aren’t available, teams either pause work or use substitutes that don’t hold up in the field.",
+      "This network standardized a core set of SKUs for common repairs and focused on fast replenishment during peak periods. Consistency mattered as much as speed—the same part numbers across locations reduced confusion and helped technicians work faster.",
+      "With a stable core assortment and quicker restock, repair backlogs eased during the seasonal surge. That kept equipment returning to service on schedule and reduced repeat visits caused by mismatched or temporary hardware."
+    ]
+  }
+]

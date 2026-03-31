@@ -1,0 +1,42 @@
+[
+  {
+    "id": "ff-hot-hex-bolts",
+    "name": "Hex Bolts",
+    "category": "Structural",
+    "range": "Grade 5 / Grade 8 · zinc / hot-dip galvanized",
+    "image": null,
+    "tags": ["bolts", "structural"]
+  },
+  {
+    "id": "ff-hot-self-drilling-screws",
+    "name": "Self-drilling Screws",
+    "category": "Sheet metal",
+    "range": "#6–#14 · various heads · coated options",
+    "image": null,
+    "tags": ["screws"]
+  },
+  {
+    "id": "ff-hot-stainless-washers",
+    "name": "Stainless Washers",
+    "category": "Corrosion resistant",
+    "range": "304 / 316 · flat + fender · standard sizes",
+    "image": null,
+    "tags": ["washers", "stainless"]
+  },
+  {
+    "id": "ff-hot-rivets",
+    "name": "Blind Rivets",
+    "category": "Assembly",
+    "range": "Aluminum / steel / stainless · multiple grip ranges",
+    "image": null,
+    "tags": ["rivets"]
+  },
+  {
+    "id": "ff-hot-kits",
+    "name": "Hardware Kits",
+    "category": "Kitting",
+    "range": "Labeled, station-ready assortments for install crews",
+    "image": null,
+    "tags": ["kits", "kitting"]
+  }
+]
