@@ -1,4 +1,6 @@
 import Image from 'next/image';
+import BackNav from '@/components/BackNav';
+import PageContainer from '@/components/PageContainer';
 import { getProductItems } from '@/lib/products';
 
 export const metadata = {
@@ -11,7 +13,8 @@ export default function ProductsPage() {
 
   return (
     <main className="bg-brand-surface font-sans">
-      <div className="mx-auto w-full max-w-7xl px-6 py-20 md:px-8 lg:px-10">
+      <PageContainer>
+        <BackNav href="/" label="Back to home" className="mb-10" />
         <div className="max-w-3xl">
           <p className="font-jetbrains text-[0.7rem] uppercase tracking-[0.14em] text-brand-secondary/60">
             Products
@@ -70,7 +73,7 @@ export default function ProductsPage() {
             </article>
           ))}
         </div>
-      </div>
+      </PageContainer>
     </main>
   );
 }

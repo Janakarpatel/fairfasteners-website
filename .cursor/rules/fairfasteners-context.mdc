@@ -7,7 +7,7 @@ alwaysApply: true
 
 ## Stack
 - Next.js App Router (`src/app`), React 19, Tailwind v4 (`@import "tailwindcss"` in `globals.css`), TypeScript.
-- **Fonts:** Geist via `next/font/google` on `<html>` (`--font-geist-sans`, `--font-geist-mono`) + `Geist` className on `<body>`; primary brand typeface is Geist.
+- **Fonts:** Primary typeface is **Manrope** via `next/font/google` (`--font-manrope` → `font-sans` on `<body>`). **Geist** + **Geist Mono** remain loaded (`--font-geist-sans`, `--font-geist-mono`) for future use — apply with `font-geist` / `font-mono`.
 - **Motion:** `npm install motion` — import from **`motion/react`** (same API as Framer Motion). Use **`useReducedMotion()`**; when true, skip or zero-out durations / hover springs.
 - **Scroll:** Lenis in `SmoothScroll` wrapper in `layout.tsx`.
 - **Optional 3D:** `@splinetool/react-spline` with dynamic `ssr: false`; scene URL `NEXT_PUBLIC_SPLINE_SCENE_URL` (`.splinecode` URL) if a Spline hero background is used.

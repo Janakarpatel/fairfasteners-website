@@ -24,7 +24,7 @@ export default function HomeValueSection() {
       <div className="flex min-h-0 flex-1 flex-col">
         {/* Headline — natural height */}
         <div className="max-w-5xl shrink-0 px-6 py-8 md:px-8 lg:px-10">
-          <h2 className="text-3xl font-normal leading-tighter tracking-tight mt-20 text-brand-secondary md:text-4xl lg:text-5xl">
+          <h2 className="mt-8 text-3xl font-normal leading-tighter tracking-tight text-brand-secondary md:mt-10 md:text-4xl lg:text-5xl">
             From precision hardware to dependable supply, Fair Fasteners delivers what
             professionals need for assemblies that last.
           </h2>

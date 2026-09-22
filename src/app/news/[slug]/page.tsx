@@ -1,5 +1,6 @@
 import Image from 'next/image';
-import Link from 'next/link';
+import BackNav from '@/components/BackNav';
+import PageContainer from '@/components/PageContainer';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getNewsBySlug, getNewsItems } from '@/lib/news';
@@ -33,20 +34,19 @@ export default async function NewsArticlePage({ params }: Props) {
 
   return (
     <main className="bg-brand-surface font-sans">
-      <div className="mx-auto w-full max-w-4xl px-6 py-16 md:px-8 lg:px-10">
-        <div className="flex items-center justify-between gap-4">
-          <Link
-            href="/news"
-            className="font-jetbrains text-[0.6875rem] uppercase tracking-[0.12em] text-brand-secondary/70 transition hover:text-brand-secondary motion-reduce:transition-none"
-          >
-            ← Back to News
-          </Link>
-          <p className="font-jetbrains text-[0.6875rem] uppercase tracking-[0.12em] text-brand-secondary/55">
-            {item.field} · {formatDate(item.date)}
-          </p>
-        </div>
+      <PageContainer width="narrow">
+        <BackNav
+          href="/news"
+          label="Back to news"
+          className="mb-8"
+          trailing={
+            <p className="font-jetbrains text-[0.6875rem] uppercase tracking-[0.12em] text-brand-secondary/55">
+              {item.field} · {formatDate(item.date)}
+            </p>
+          }
+        />
 
-        <h1 className="mt-6 text-4xl leading-[1.05] tracking-tight text-brand-secondary md:text-5xl">
+        <h1 className="text-4xl leading-[1.05] tracking-tight text-brand-secondary md:text-5xl">
           {item.title}
         </h1>
         <p className="mt-4 text-base font-light leading-relaxed text-brand-secondary/75 md:text-lg">
@@ -73,7 +73,7 @@ export default async function NewsArticlePage({ params }: Props) {
             <p key={idx}>{p}</p>
           ))}
         </article>
-      </div>
+      </PageContainer>
     </main>
   );
 }

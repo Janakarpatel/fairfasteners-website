@@ -1,14 +1,26 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Manrope } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import SmoothScroll from "@/components/SmoothScroll";
+import { isSiteLive } from "@/lib/site";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Fair Fasteners",
-  description: "A fastening solutions company",
+  title: isSiteLive()
+    ? "Fair Fasteners"
+    : "Fair Fasteners — Under development",
+  description: isSiteLive()
+    ? "A fastening solutions company"
+    : "Fair Fasteners is under development. Contact us for quotes, specs, and supply questions.",
 };
 
+const manrope = Manrope({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-manrope",
+});
+
+/** Kept available for future use — apply via `font-geist` / CSS var */
 const geistSans = Geist({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
@@ -17,13 +29,8 @@ const geistSans = Geist({
 
 const geistMono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-geist-mono",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
   weight: ["400", "500", "600", "700"],
+  variable: "--font-geist-mono",
 });
 
 export default function RootLayout({
@@ -31,14 +38,22 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const live = isSiteLive();
+
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${jetbrainsMono.variable}`}
+      className={`${manrope.variable} ${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className={`${geistSans.className} font-sans antialiased`}>
-        <Navbar />
-        <SmoothScroll>{children}</SmoothScroll>
+      <body className={`${manrope.className} font-sans antialiased`}>
+        {live ? (
+          <>
+            <Navbar />
+            <SmoothScroll>{children}</SmoothScroll>
+          </>
+        ) : (
+          children
+        )}
       </body>
     </html>
   );

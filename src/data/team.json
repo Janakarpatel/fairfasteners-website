@@ -1,0 +1,25 @@
+{
+  "story": "Fair Fasteners began with a straightforward goal: help teams in the field and on the line get the right hardware, documented and delivered without friction. What started as a sourcing problem became a company built on specification-grade product, traceable supply, and support that respects how work actually gets done.",
+  "members": [
+    {
+      "id": "founder-operations",
+      "name": "Alex Morgan",
+      "role": "Co-founder · Operations",
+      "note": [
+        "I spent years watching procurement and installation teams lose days to inconsistent lots, missing paperwork, and last-minute substitutions. We started Fair Fasteners to make supply predictable—so the part on the truck matches the part on the drawing.",
+        "My focus is building programs that scale: audited sourcing, clear labeling, and fulfillment that keeps pace with retrofit schedules and OEM runs alike."
+      ],
+      "image": "/images/shailesh_patel.png"
+    },
+    {
+      "id": "founder-technical",
+      "name": "Jordan Lee",
+      "role": "Co-founder · Technical",
+      "note": [
+        "Fasteners fail in the details—grade, coating, torque, corrosion class. I joined Alex because too many projects treat hardware as an afterthought until something seizes, strips, or fails inspection.",
+        "Today I work with customers on joint design, material selection, and field troubleshooting. Our job is to help you stay compliant without slowing the job site or the production line."
+      ],
+      "image": null
+    }
+  ]
+}

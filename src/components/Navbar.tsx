@@ -1,208 +1,308 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { Menu, X } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 
 const ease = [0.16, 1, 0.3, 1] as const;
-const SCROLL_TOP_THRESHOLD = 72;
-const SCROLL_DELTA_DOWN = 8;
-const SCROLL_DELTA_UP = 2;
-const IDLE_HIDE_MS = 4500;
+const CLOSE_DELAY_MS = 140;
 
-type NavChild = { href: string; label: string };
-type NavSection = { href: string; label: string; children?: readonly NavChild[] };
+type MegaEntry = {
+  href: string;
+  title: string;
+  description: string;
+};
 
-const navSections: readonly NavSection[] = [
+type MegaItem = {
+  id: string;
+  label: string;
+  href: string;
+  entries?: readonly MegaEntry[];
+  featured?: { src: string; alt: string };
+};
+
+const megaItems: readonly MegaItem[] = [
   {
-    href: '/products',
+    id: 'about',
+    label: 'About',
+    href: '/about',
+    entries: [
+      {
+        href: '/about',
+        title: 'Overview',
+        description: 'Who we are and how Fair Fasteners supports industrial programs.',
+      },
+      {
+        href: '/about#leadership',
+        title: 'Leadership',
+        description: 'Meet the people behind the hardware and supply discipline.',
+      },
+      {
+        href: 'mailto:info@fairfasteners.com',
+        title: 'Careers',
+        description: 'Join a team built around reliable product and responsive support.',
+      },
+    ],
+    featured: {
+      src: '/images/energy.jpg',
+      alt: 'Fair Fasteners company',
+    },
+  },
+  {
+    id: 'products',
     label: 'Products',
-    children: [
-      { href: '#', label: 'Rivets & bolts' },
-      { href: '#', label: 'Screws & threaded' },
-      { href: '#', label: 'Nuts, washers & kits' },
+    href: '/products',
+    entries: [
+      {
+        href: '/products',
+        title: 'Rivets & bolts',
+        description: 'Structural fasteners for commercial and OEM assemblies.',
+      },
+      {
+        href: '/products',
+        title: 'Screws & threaded',
+        description: 'Precision threaded hardware for demanding joints.',
+      },
+      {
+        href: '/products',
+        title: 'Nuts, washers & kits',
+        description: 'Matched kits and finishes ready for the job site.',
+      },
+      {
+        href: '/products',
+        title: 'Specialty hardware',
+        description: 'Coated and high-strength options for harsh environments.',
+      },
+      {
+        href: '/products',
+        title: 'Corrosion resistant',
+        description: 'Materials and coatings selected for longevity outdoors.',
+      },
     ],
+    featured: {
+      src: '/images/manufacturing.jpg',
+      alt: 'Industrial fastening products',
+    },
   },
   {
-    href: '#',
+    id: 'solutions',
     label: 'Solutions',
-    children: [
-      { href: '#', label: 'Commercial programs' },
-      { href: '#', label: 'OEM & custom runs' },
+    href: '#',
+    entries: [
+      {
+        href: '#',
+        title: 'Commercial programs',
+        description: 'Reliable supply for builders and distribution partners.',
+      },
+      {
+        href: '#',
+        title: 'OEM & custom runs',
+        description: 'Made-to-spec fasteners aligned to your drawings.',
+      },
+      {
+        href: '#',
+        title: 'Manufacturing',
+        description: 'Hardware that keeps production lines moving.',
+      },
+      {
+        href: '#',
+        title: 'Infrastructure',
+        description: 'Traceable products for regulated civil projects.',
+      },
+      {
+        href: '#',
+        title: 'Energy & marine',
+        description: 'Corrosion-class solutions for extreme conditions.',
+      },
     ],
+    featured: {
+      src: '/images/infrastructure.jpg',
+      alt: 'Industrial solutions and infrastructure',
+    },
   },
-  { href: '#', label: 'Company' },
-  { href: '/news', label: 'News' },
+  {
+    id: 'news',
+    label: 'News',
+    href: '/news',
+  },
 ] as const;
 
-function BracketContact({ className = '' }: { className?: string }) {
-  return (
-    <button
-      type="button"
-      className={`inline-flex items-center border border-brand-primary bg-brand-surface px-10 py-2 text-sm font-medium tracking-tight text-brand-secondary transition-colors hover:bg-brand-primary hover:text-brand-surface ${className}`}
-    >
-      <span className="tracking-normal text-md">Get Started</span>
-    </button>
-  );
-}
+const listVariants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.045, delayChildren: 0.05 },
+  },
+} as const;
 
-function MenuOpenButton({
-  onClick,
-  expanded,
-  className = '',
+const itemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.38, ease },
+  },
+} as const;
+
+function MegaPanelContent({
+  item,
+  reduce,
+  onNavigate,
 }: {
-  onClick: () => void;
-  expanded: boolean;
-  className?: string;
+  item: MegaItem;
+  reduce: boolean | null;
+  onNavigate?: () => void;
 }) {
+  if (!item.entries?.length) return null;
+
   return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      className={`group inline-flex items-center justify-center border border-brand-primary bg-brand-surface px-3 py-2 text-sm font-medium tracking-tight text-brand-secondary transition-colors hover:text-brand-primary ${className}`}
-      aria-expanded={expanded}
-      aria-controls="site-mega-menu"
-      aria-label={expanded ? 'Close menu' : 'Open menu'}
+    <motion.div
+      key={item.id}
+      variants={listVariants}
+      initial={reduce ? false : 'hidden'}
+      animate="visible"
+      className="grid grid-cols-1 gap-8 p-6 md:grid-cols-[minmax(0,1.2fr)_minmax(0,0.85fr)] md:gap-10 md:p-8 lg:p-9"
     >
-      <AnimatePresence initial={false} mode="wait">
-        {expanded ? (
-          <motion.span
-            key="icon-close"
-            initial={{ opacity: 0, rotate: -90, scale: 0.9 }}
-            animate={{ opacity: 1, rotate: 0, scale: 1 }}
-            exit={{ opacity: 0, rotate: 90, scale: 0.9 }}
-            transition={{ duration: 0.22, ease }}
-            className="inline-flex"
+      <div className="grid grid-cols-1 gap-x-10 gap-y-7 sm:grid-cols-2">
+        {item.entries.map((entry) => (
+          <motion.a
+            key={entry.title}
+            href={entry.href}
+            variants={itemVariants}
+            onClick={onNavigate}
+            className="group block rounded-lg px-3 py-3 outline-none transition-colors duration-300 hover:bg-black/[0.04] focus-visible:ring-2 focus-visible:ring-brand-primary"
           >
-            <X
-              aria-hidden
-              className="h-5 w-5 text-brand-secondary/70 transition-colors group-hover:text-brand-primary"
-              strokeWidth={1.75}
-            />
-          </motion.span>
-        ) : (
-          <motion.span
-            key="icon-menu"
-            initial={{ opacity: 0, rotate: 90, scale: 0.9 }}
-            animate={{ opacity: 1, rotate: 0, scale: 1 }}
-            exit={{ opacity: 0, rotate: -90, scale: 0.9 }}
-            transition={{ duration: 0.22, ease }}
-            className="inline-flex"
-          >
-            <Menu
-              aria-hidden
-              className="h-5 w-5 text-brand-secondary/70 transition-colors group-hover:text-brand-primary"
-              strokeWidth={1.75}
-            />
-          </motion.span>
-        )}
-      </AnimatePresence>
-    </motion.button>
+            <p className="text-[0.9375rem] font-semibold tracking-tight text-brand-secondary transition-colors duration-300 group-hover:text-brand-primary">
+              {entry.title}
+            </p>
+            <p className="mt-1.5 text-sm leading-relaxed text-brand-secondary/55 transition-colors duration-300 group-hover:text-brand-secondary/75">
+              {entry.description}
+            </p>
+          </motion.a>
+        ))}
+      </div>
+
+      {item.featured && (
+        <motion.div
+          variants={itemVariants}
+          className="relative min-h-[200px] overflow-hidden rounded-xl bg-brand-secondary/5 md:min-h-full"
+        >
+          <Image
+            src={item.featured.src}
+            alt={item.featured.alt}
+            fill
+            sizes="(max-width: 768px) 100vw, 420px"
+            className="object-cover"
+          />
+        </motion.div>
+      )}
+    </motion.div>
   );
 }
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [scrollHidden, setScrollHidden] = useState(false);
-  const lastY = useRef(0);
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [renderedItem, setRenderedItem] = useState<MegaItem | null>(null);
+  const [panelHeight, setPanelHeight] = useState(0);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const measureRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const isHome = pathname === '/';
+  const isDarkPage = isHome || pathname === '/about' || pathname.startsWith('/about/');
+  const megaOpen = Boolean(activeId);
 
-  useEffect(() => {
-    lastY.current = typeof window !== 'undefined' ? window.scrollY : 0;
-  }, []);
-
-  useEffect(() => {
-    let idleTimer: ReturnType<typeof setTimeout> | null = null;
-
-    const clearIdleTimer = () => {
-      if (idleTimer) {
-        clearTimeout(idleTimer);
-        idleTimer = null;
-      }
-    };
-
-    const scheduleIdleHide = () => {
-      clearIdleTimer();
-      if (reduce) return;
-      const y = window.scrollY;
-      if (y < SCROLL_TOP_THRESHOLD) return;
-      idleTimer = setTimeout(() => setScrollHidden(true), IDLE_HIDE_MS);
-    };
-
-    const onScroll = () => {
-      const y = window.scrollY;
-      const delta = y - lastY.current;
-      lastY.current = y;
-
-      if (y < SCROLL_TOP_THRESHOLD) {
-        clearIdleTimer();
-        setScrollHidden(false);
-        return;
-      }
-
-      scheduleIdleHide();
-
-      if (delta > SCROLL_DELTA_DOWN) {
-        setScrollHidden(true);
-      } else if (delta < -SCROLL_DELTA_UP) {
-        setScrollHidden(false);
-      }
-    };
-
-    window.addEventListener('scroll', onScroll, { passive: true });
-
-    if (typeof window !== 'undefined' && window.scrollY >= SCROLL_TOP_THRESHOLD) {
-      scheduleIdleHide();
+  const clearCloseTimer = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current);
+      closeTimer.current = null;
     }
+  };
 
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      clearIdleTimer();
-    };
-  }, [reduce]);
+  const openMega = (item: MegaItem) => {
+    clearCloseTimer();
+    if (item.entries?.length) setActiveId(item.id);
+    else setActiveId(null);
+  };
+
+  const scheduleClose = () => {
+    clearCloseTimer();
+    closeTimer.current = setTimeout(() => setActiveId(null), CLOSE_DELAY_MS);
+  };
+
+  useEffect(() => () => clearCloseTimer(), []);
 
   useEffect(() => {
-    if (!menuOpen) return;
+    setMobileOpen(false);
+    setActiveId(null);
+  }, [pathname]);
+
+  const activeItem = megaItems.find((item) => item.id === activeId) ?? null;
+
+  useLayoutEffect(() => {
+    if (activeItem?.entries) setRenderedItem(activeItem);
+  }, [activeItem]);
+
+  useLayoutEffect(() => {
+    const node = measureRef.current;
+    if (!node || !renderedItem) return;
+    const measure = () => setPanelHeight(node.scrollHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(node);
+    return () => ro.disconnect();
+  }, [renderedItem]);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = prev;
     };
-  }, [menuOpen]);
+  }, [mobileOpen]);
 
   useEffect(() => {
-    if (!menuOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMenuOpen(false);
+      if (e.key === 'Escape') {
+        setActiveId(null);
+        setMobileOpen(false);
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [menuOpen]);
+  }, []);
 
-  const navHidden = scrollHidden && !menuOpen && reduce !== true;
-
-  const panelTransition = reduce
+  const heightTransition = reduce
     ? { duration: 0 }
-    : { duration: 0.55, ease };
-  const backdropTransition = reduce ? { duration: 0 } : { duration: 0.35, ease };
+    : { duration: 0.45, ease };
 
-  const navTop = navHidden ? '-200px' : '0px';
-  const navTransition = reduce
-    ? undefined
-    : `top 300ms cubic-bezier(${ease[0]}, ${ease[1]}, ${ease[2]}, ${ease[3]})`;
+  const onLight = !isDarkPage;
+  const linkBase = onLight
+    ? 'text-brand-secondary/70 hover:text-brand-secondary'
+    : 'text-white/80 hover:text-white';
+  const pillActive = onLight
+    ? 'bg-brand-secondary/10 text-brand-secondary'
+    : 'bg-white/15 text-white';
+  const contactBtn = onLight
+    ? 'border-brand-secondary/25 text-brand-secondary hover:border-brand-secondary hover:bg-brand-secondary hover:text-white'
+    : 'border-white/50 text-white hover:border-white hover:bg-white hover:text-brand-secondary';
 
   return (
     <>
-      <nav
-        className="fixed left-0 right-0 top-0 z-[110] border-b border-transparent bg-transparent font-sans"
-        style={{
-          top: navTop,
-          transition: navTransition,
-          pointerEvents: navHidden ? 'none' : 'auto',
-        }}
+      <header
+        className="fixed left-0 right-0 top-0 z-[110] bg-transparent font-sans"
+        onMouseLeave={scheduleClose}
       >
-        <div className="relative flex w-full max-w-none items-center justify-between gap-4 px-6 py-6 md:px-8">
-          <a href="/" className="shrink-0 outline-none ring-brand-primary focus-visible:ring-2">
+        <nav className="mx-auto flex h-[4.5rem] w-full max-w-[1600px] items-center justify-between gap-4 px-4 md:h-20 md:px-5 lg:px-6">
+          <a
+            href="/"
+            className="flex shrink-0 items-center outline-none ring-brand-primary focus-visible:ring-2"
+            onMouseEnter={scheduleClose}
+          >
             <img
               src="/company_logo.png"
               alt="Fair Fasteners"
@@ -210,184 +310,230 @@ export default function Navbar() {
             />
           </a>
 
-          <div className="flex shrink-0 items-center gap-3">
-            <BracketContact className="hidden sm:inline-flex" />
-            <MenuOpenButton expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)} />
+          <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+            <ul className="hidden items-center gap-1 lg:flex">
+              {megaItems.map((item) => {
+                const hasMenu = Boolean(item.entries?.length);
+                const isOpen = activeId === item.id;
+                const routeActive =
+                  item.href !== '#' &&
+                  item.href !== '/' &&
+                  pathname.startsWith(item.href);
+
+                return (
+                  <li
+                    key={item.id}
+                    onMouseEnter={() => openMega(item)}
+                    onFocus={() => openMega(item)}
+                  >
+                    <a
+                      href={item.href}
+                      className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[0.8125rem] font-medium tracking-tight transition-colors duration-300 ${
+                        isOpen ? pillActive : linkBase
+                      } ${!isOpen && routeActive && !megaOpen ? 'underline underline-offset-[5px]' : ''}`}
+                      aria-expanded={hasMenu ? isOpen : undefined}
+                      aria-controls={hasMenu ? 'site-mega-panel' : undefined}
+                    >
+                      {item.label}
+                      {hasMenu && (
+                        <ChevronDown
+                          className={`h-3.5 w-3.5 opacity-70 transition-transform duration-300 ${
+                            isOpen ? 'rotate-180' : ''
+                          }`}
+                          strokeWidth={2}
+                          aria-hidden
+                        />
+                      )}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <a
+              href="#contact"
+              className={`hidden items-center rounded-full border px-4 py-2 text-[0.8125rem] font-medium tracking-tight transition-colors duration-300 sm:inline-flex ${contactBtn}`}
+              onMouseEnter={scheduleClose}
+            >
+              Contact
+            </a>
+
+            <button
+              type="button"
+              className={`inline-flex items-center justify-center p-2 lg:hidden ${
+                onLight ? 'text-brand-secondary' : 'text-white'
+              }`}
+              aria-expanded={mobileOpen}
+              aria-controls="site-mobile-menu"
+              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              onClick={() => setMobileOpen((o) => !o)}
+            >
+              {mobileOpen ? (
+                <X className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+              ) : (
+                <Menu className="h-5 w-5" strokeWidth={1.5} aria-hidden />
+              )}
+            </button>
           </div>
+        </nav>
+
+        {/* Floating mega pane */}
+        <div className="pointer-events-none absolute left-0 right-0 top-full hidden px-4 pt-1 md:px-5 lg:block lg:px-6">
+          <motion.div
+            id="site-mega-panel"
+            role="region"
+            aria-label={activeItem ? `${activeItem.label} menu` : 'Menu'}
+            aria-hidden={!megaOpen}
+            className="pointer-events-auto mx-auto max-w-[1100px] overflow-hidden rounded-xl bg-white shadow-[0_24px_60px_rgba(15,23,42,0.22)]"
+            initial={false}
+            animate={{
+              height: megaOpen ? panelHeight : 0,
+              opacity: megaOpen ? 1 : 0,
+              y: megaOpen ? 0 : -6,
+            }}
+            transition={heightTransition}
+            onMouseEnter={clearCloseTimer}
+            onAnimationComplete={() => {
+              if (!activeId) setRenderedItem(null);
+            }}
+            style={{ pointerEvents: megaOpen ? 'auto' : 'none' }}
+          >
+            <div ref={measureRef}>
+              {renderedItem && (
+                <MegaPanelContent
+                  key={renderedItem.id}
+                  item={renderedItem}
+                  reduce={reduce}
+                  onNavigate={() => setActiveId(null)}
+                />
+              )}
+            </div>
+          </motion.div>
         </div>
-      </nav>
+      </header>
 
       <AnimatePresence>
-        {menuOpen && (
-          <>
-            <motion.button
-              type="button"
-              key="mega-backdrop"
-              className="fixed inset-0 z-[90] bg-brand-secondary/70 backdrop-blur-md"
-              aria-label="Close menu"
-              initial={{ opacity: reduce ? 1 : 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: reduce ? 1 : 0 }}
-              transition={backdropTransition}
-              onClick={() => setMenuOpen(false)}
-            />
+        {megaOpen && (
+          <motion.button
+            type="button"
+            aria-label="Close menu"
+            className="fixed inset-0 z-[100] hidden bg-black/25 lg:block"
+            initial={{ opacity: reduce ? 1 : 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: reduce ? 1 : 0 }}
+            transition={{ duration: reduce ? 0 : 0.35, ease }}
+            onClick={() => setActiveId(null)}
+            onMouseEnter={scheduleClose}
+          />
+        )}
+      </AnimatePresence>
 
-            <motion.div
-              id="site-mega-menu"
-              key="mega-panel"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Site menu"
-              className="fixed inset-y-0 right-0 z-[100] flex w-full max-w-full flex-col border-l border-brand-secondary/12 bg-brand-surface/95 shadow-[-12px_0_48px_rgba(15,23,42,0.08)] backdrop-blur-xl sm:max-w-[min(100%,640px)] md:max-w-[min(100%,820px)] lg:max-w-[62vw] xl:max-w-[920px]"
-              initial={{ x: reduce ? 0 : '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: reduce ? 0 : '100%' }}
-              transition={panelTransition}
-            >
-              <div className="min-h-0 flex-1 overflow-hidden pt-[88px] sm:pt-[96px] md:pt-[104px]">
-                <div className="grid h-full grid-cols-1 divide-y divide-brand-secondary/12 md:grid-cols-3 md:divide-x md:divide-y-0">
-                  {/* Column 1 — Navigation */}
-                  <div className="flex flex-col overflow-hidden px-6 py-7 md:px-8 md:py-8">
-                    <p className="font-jetbrains text-[0.65rem] uppercase tracking-[0.14em] text-brand-secondary/50">
-                      Navigation
-                    </p>
-                    <div className="mt-6 space-y-10">
-                      {navSections.map(({ href, label, children }) => (
-                        <div key={label}>
-                          <a
-                            href={href}
-                            className="block text-xl font-medium tracking-tight text-brand-primary md:text-2xl md:leading-snug"
-                            onClick={() => setMenuOpen(false)}
-                          >
-                            {label}
-                          </a>
-                          {children && children.length > 0 && (
-                            <ul className="mt-4 space-y-2 border-l border-brand-secondary/15 pl-4">
-                              {children.map((c) => (
-                                <li key={c.label}>
-                                  <a
-                                    href={c.href}
-                                    className="group flex items-start gap-2 text-sm font-medium text-brand-secondary transition-colors hover:text-brand-primary"
-                                    onClick={() => setMenuOpen(false)}
-                                  >
-                                    <span
-                                      className="mt-0.5 font-jetbrains text-xs text-brand-secondary/45"
-                                      aria-hidden
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            id="site-mobile-menu"
+            key="mobile-panel"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+            className="fixed inset-0 z-[105] flex flex-col bg-white pt-[4.5rem] font-sans lg:hidden"
+            initial={{ opacity: reduce ? 1 : 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: reduce ? 1 : 0 }}
+            transition={{ duration: reduce ? 0 : 0.35, ease }}
+          >
+            <div className="flex-1 overflow-y-auto px-5 pt-2 pb-8">
+              {megaItems.map((item, i) => {
+                const hasMenu = Boolean(item.entries?.length);
+                const expanded = mobileExpanded === item.id;
+                return (
+                  <motion.div
+                    key={item.id}
+                    className="border-b border-brand-secondary/10"
+                    initial={reduce ? false : { opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: reduce ? 0 : 0.35,
+                      delay: reduce ? 0 : 0.04 * i,
+                      ease,
+                    }}
+                  >
+                    {hasMenu ? (
+                      <>
+                        <button
+                          type="button"
+                          className="flex w-full items-center justify-between py-4 text-left text-lg font-medium tracking-tight text-brand-secondary"
+                          aria-expanded={expanded}
+                          onClick={() =>
+                            setMobileExpanded((id) =>
+                              id === item.id ? null : item.id,
+                            )
+                          }
+                        >
+                          {item.label}
+                          <ChevronDown
+                            className={`h-4 w-4 text-brand-secondary/50 transition-transform duration-300 ${
+                              expanded ? 'rotate-180' : ''
+                            }`}
+                            strokeWidth={1.75}
+                            aria-hidden
+                          />
+                        </button>
+                        <AnimatePresence initial={false}>
+                          {expanded && (
+                            <motion.div
+                              initial={reduce ? false : { height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={reduce ? undefined : { height: 0, opacity: 0 }}
+                              transition={{ duration: reduce ? 0 : 0.32, ease }}
+                              className="overflow-hidden"
+                            >
+                              <ul className="space-y-4 pb-5 pl-1">
+                                {item.entries!.map((entry) => (
+                                  <li key={entry.title}>
+                                    <a
+                                      href={entry.href}
+                                      className="block"
+                                      onClick={() => setMobileOpen(false)}
                                     >
-                                      ↳
-                                    </span>
-                                    {c.label}
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
+                                      <p className="text-[0.9375rem] font-semibold text-brand-secondary">
+                                        {entry.title}
+                                      </p>
+                                      <p className="mt-1 text-sm text-brand-secondary/55">
+                                        {entry.description}
+                                      </p>
+                                    </a>
+                                  </li>
+                                ))}
+                              </ul>
+                            </motion.div>
                           )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Column 2 — Spotlight */}
-                  <div className="flex flex-col overflow-hidden px-6 py-7 md:px-8 md:py-8">
-                    <div className="flex items-baseline justify-between gap-3">
-                      <p className="font-jetbrains text-[0.65rem] uppercase tracking-[0.14em] text-brand-secondary/50">
-                        Latest
-                      </p>
+                        </AnimatePresence>
+                      </>
+                    ) : (
                       <a
-                        href="#"
-                        className="font-jetbrains text-[0.65rem] uppercase tracking-[0.12em] text-brand-secondary underline-offset-4 transition-colors hover:text-brand-primary hover:underline"
-                        onClick={() => setMenuOpen(false)}
+                        href={item.href}
+                        className="block py-4 text-lg font-medium tracking-tight text-brand-secondary"
+                        onClick={() => setMobileOpen(false)}
                       >
-                        Newsroom ↗
+                        {item.label}
                       </a>
-                    </div>
-                    <div className="mt-7 space-y-7">
-                      <article className="space-y-3">
-                        <p className="font-jetbrains text-[0.65rem] uppercase tracking-wider text-brand-secondary/45">
-                          Company · March 2026
-                        </p>
-                        <p className="text-sm leading-relaxed text-brand-secondary">
-                          Expanding coated-fastener capacity for regulated industrial
-                          programs.
-                        </p>
-                        <a
-                          href="#"
-                          className="inline-block text-sm font-medium text-brand-primary underline decoration-brand-primary/30 underline-offset-4 transition-colors hover:decoration-brand-primary"
-                          onClick={() => setMenuOpen(false)}
-                        >
-                          Read more
-                        </a>
-                      </article>
-                      <article className="space-y-3 border-t border-brand-secondary/10 pt-7 [@media(max-height:780px)]:hidden">
-                        <p className="font-jetbrains text-[0.65rem] uppercase tracking-wider text-brand-secondary/45">
-                          Supply chain · Q1 2026
-                        </p>
-                        <p className="text-sm leading-relaxed text-brand-secondary">
-                          How distributors shorten lead times with audited sourcing and
-                          documentation packs.
-                        </p>
-                        <a
-                          href="#"
-                          className="inline-block text-sm font-medium text-brand-primary underline decoration-brand-primary/30 underline-offset-4 transition-colors hover:decoration-brand-primary"
-                          onClick={() => setMenuOpen(false)}
-                        >
-                          Learn more
-                        </a>
-                      </article>
-                    </div>
-                  </div>
+                    )}
+                  </motion.div>
+                );
+              })}
+            </div>
 
-                  {/* Column 3 — Overview */}
-                  <div className="flex flex-col overflow-hidden px-6 py-7 md:px-8 md:py-8">
-                    <div className="flex items-baseline justify-between gap-3">
-                      <p className="font-jetbrains text-[0.65rem] uppercase tracking-[0.14em] text-brand-secondary/50">
-                        Offerings
-                      </p>
-                      <a
-                        href="#"
-                        className="font-jetbrains text-[0.65rem] uppercase tracking-[0.12em] text-brand-secondary underline-offset-4 transition-colors hover:text-brand-primary hover:underline"
-                        onClick={() => setMenuOpen(false)}
-                      >
-                        View all ↗
-                      </a>
-                    </div>
-                    <p className="mt-7 text-sm leading-relaxed text-brand-secondary md:text-[0.9375rem] md:leading-[1.65]">
-                      Fair Fasteners supports commercial builders, OEMs, and industrial
-                      teams with specification-grade hardware, traceable sourcing, and
-                      responsive technical support—from quote through installation.
-                    </p>
-                    <a
-                      href="#"
-                      className="mt-8 inline-flex items-center gap-2 text-sm font-medium text-brand-primary transition-colors hover:text-brand-primary-hover"
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      <span className="font-jetbrains text-xs text-brand-secondary/45" aria-hidden>
-                        ↳
-                      </span>
-                      Contact our team
-                    </a>
-                    <div className="mt-8 hidden border border-brand-secondary/10 bg-brand-surface p-4 sm:block [@media(max-height:780px)]:hidden">
-                      <p className="font-jetbrains text-[0.6rem] uppercase tracking-wider text-brand-secondary/45">
-                        Quick line
-                      </p>
-                      <p className="mt-2 text-xs leading-relaxed text-brand-secondary/80">
-                        Need a drawing reviewed or a material substitution? Our
-                        engineers help you stay compliant without slowing the job site.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="border-t border-brand-secondary/12 px-6 py-5 md:px-10">
-                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <p className="text-center text-xs text-brand-secondary/50 sm:text-left">
-                      © {new Date().getFullYear()} Fair Fasteners
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </>
+            <div className="border-t border-brand-secondary/10 px-5 py-6">
+              <a
+                href="#contact"
+                className="flex w-full items-center justify-center rounded-full border border-brand-secondary px-4 py-3 text-[0.9375rem] font-medium text-brand-secondary"
+                onClick={() => setMobileOpen(false)}
+              >
+                Contact
+              </a>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </>

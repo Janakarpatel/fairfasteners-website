@@ -23,12 +23,12 @@
   --color-brand-primary-hover: var(--brand-primary-hover);
   --color-brand-warm: var(--brand-warm);
   --color-brand-warm-ink: var(--brand-warm-ink);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-manrope);
   --font-mono: var(--font-geist-mono);
-  /* Secondary mono from Google (JetBrains); use class font-jetbrains when needed */
-  --font-jetbrains: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+  /* Future / opt-in: use class `font-geist` */
+  --font-geist: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-jetbrains: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, "Liberation Mono", "Courier New", monospace;
-  --font-serif: ui-serif, Georgia, "Times New Roman", serif;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -58,3 +58,35 @@ body {
 body::-webkit-scrollbar {
   display: none;
 }
+
+.ff-map-pin {
+  position: relative;
+  width: 40px;
+  height: 54px;
+  filter: drop-shadow(0 8px 14px rgba(0, 0, 0, 0.38));
+}
+
+@media (min-width: 640px) {
+  .ff-map-pin {
+    width: 56px;
+    height: 76px;
+  }
+}
+
+.ff-map-pin-shape {
+  display: block;
+  height: 100%;
+  width: 100%;
+}
+
+.ff-map-pin-logo {
+  position: absolute;
+  left: 50%;
+  top: 34%;
+  width: 70%;
+  height: auto;
+  max-height: 22px;
+  object-fit: contain;
+  transform: translate(-50%, -50%);
+}
+
