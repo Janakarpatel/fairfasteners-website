@@ -354,7 +354,7 @@ export default function ComingSoon() {
             },
           }}
         >
-          Site status
+          Still open
         </motion.p>
 
         <motion.h1
@@ -368,13 +368,13 @@ export default function ComingSoon() {
             },
           }}
         >
-          Our new website
+          We&apos;re improving
           <br />
-          is under development.
+          our identity.
         </motion.h1>
 
         <motion.p
-          className="mt-5 max-w-lg text-sm font-light leading-relaxed text-brand-surface/75 md:text-base"
+          className="mt-5 w-fit max-w-full text-sm font-light leading-snug text-brand-surface/75 md:text-base"
           variants={{
             hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 16 },
             visible: {
@@ -384,8 +384,10 @@ export default function ComingSoon() {
             },
           }}
         >
-          We&apos;re finishing the new site. In the meantime, reach out, we&apos;re available
-          for quotes, specs, and supply questions.
+          <span className="block sm:whitespace-nowrap">Apologies the site is still taking shape.</span>
+          <span className="block sm:whitespace-nowrap">
+            Specs, quotes, sales, and supply are open, write or call, we&apos;re here at your service.
+          </span>
         </motion.p>
 
         <motion.div
