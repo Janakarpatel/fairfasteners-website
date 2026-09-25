@@ -2,17 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Manrope } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import SmoothScroll from "@/components/SmoothScroll";
+import BrandBackdrop from "@/components/BrandBackdrop";
+import { organizationJsonLd, rootMetadata } from "@/lib/seo";
 import { isSiteLive } from "@/lib/site";
 import "./globals.css";
 
-export const metadata: Metadata = {
-  title: isSiteLive()
-    ? "Fair Fasteners"
-    : "Fair Fasteners — Under development",
-  description: isSiteLive()
-    ? "A fastening solutions company"
-    : "Fair Fasteners is under development. Contact us for quotes, specs, and supply questions.",
-};
+export const metadata: Metadata = rootMetadata;
 
 const manrope = Manrope({
   subsets: ["latin"],
@@ -46,10 +41,17 @@ export default function RootLayout({
       className={`${manrope.variable} ${geistSans.variable} ${geistMono.variable}`}
     >
       <body className={`${manrope.className} font-sans antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
+        />
         {live ? (
           <>
-            <Navbar />
-            <SmoothScroll>{children}</SmoothScroll>
+            <BrandBackdrop />
+            <div className="relative z-10">
+              <Navbar />
+              <SmoothScroll>{children}</SmoothScroll>
+            </div>
           </>
         ) : (
           children

@@ -21,39 +21,21 @@ type MegaItem = {
   href: string;
   entries?: readonly MegaEntry[];
   featured?: { src: string; alt: string };
+  /** When false, entries are a simple click menu — no hover mega panel. */
+  mega?: boolean;
 };
 
 const megaItems: readonly MegaItem[] = [
   {
-    id: 'about',
-    label: 'About',
+    id: 'company',
+    label: 'Company',
     href: '/about',
-    entries: [
-      {
-        href: '/about',
-        title: 'Overview',
-        description: 'Who we are and how Fair Fasteners supports industrial programs.',
-      },
-      {
-        href: '/about#leadership',
-        title: 'Leadership',
-        description: 'Meet the people behind the hardware and supply discipline.',
-      },
-      {
-        href: 'mailto:info@fairfasteners.com',
-        title: 'Careers',
-        description: 'Join a team built around reliable product and responsive support.',
-      },
-    ],
-    featured: {
-      src: '/images/energy.jpg',
-      alt: 'Fair Fasteners company',
-    },
   },
   {
     id: 'products',
     label: 'Products',
     href: '/products',
+    mega: true,
     entries: [
       {
         href: '/products',
@@ -90,6 +72,7 @@ const megaItems: readonly MegaItem[] = [
     id: 'solutions',
     label: 'Solutions',
     href: '#',
+    mega: true,
     entries: [
       {
         href: '#',
@@ -211,8 +194,6 @@ export default function Navbar() {
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const measureRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
-  const isHome = pathname === '/';
-  const isDarkPage = isHome || pathname === '/about' || pathname.startsWith('/about/');
   const megaOpen = Boolean(activeId);
 
   const clearCloseTimer = () => {
@@ -224,7 +205,7 @@ export default function Navbar() {
 
   const openMega = (item: MegaItem) => {
     clearCloseTimer();
-    if (item.entries?.length) setActiveId(item.id);
+    if (item.mega && item.entries?.length) setActiveId(item.id);
     else setActiveId(null);
   };
 
@@ -280,16 +261,10 @@ export default function Navbar() {
     ? { duration: 0 }
     : { duration: 0.45, ease };
 
-  const onLight = !isDarkPage;
-  const linkBase = onLight
-    ? 'text-brand-secondary/70 hover:text-brand-secondary'
-    : 'text-white/80 hover:text-white';
-  const pillActive = onLight
-    ? 'bg-brand-secondary/10 text-brand-secondary'
-    : 'bg-white/15 text-white';
-  const contactBtn = onLight
-    ? 'border-brand-secondary/25 text-brand-secondary hover:border-brand-secondary hover:bg-brand-secondary hover:text-white'
-    : 'border-white/50 text-white hover:border-white hover:bg-white hover:text-brand-secondary';
+  const linkBase = 'text-white/80 hover:text-white';
+  const pillActive = 'bg-white/15 text-white';
+  const contactBtn =
+    'border-white/50 text-white hover:border-white hover:bg-white hover:text-brand-field';
 
   return (
     <>
@@ -313,7 +288,7 @@ export default function Navbar() {
           <div className="flex shrink-0 items-center gap-2 sm:gap-3">
             <ul className="hidden items-center gap-1 lg:flex">
               {megaItems.map((item) => {
-                const hasMenu = Boolean(item.entries?.length);
+                const hasMega = Boolean(item.mega && item.entries?.length);
                 const isOpen = activeId === item.id;
                 const routeActive =
                   item.href !== '#' &&
@@ -331,11 +306,11 @@ export default function Navbar() {
                       className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[0.8125rem] font-medium tracking-tight transition-colors duration-300 ${
                         isOpen ? pillActive : linkBase
                       } ${!isOpen && routeActive && !megaOpen ? 'underline underline-offset-[5px]' : ''}`}
-                      aria-expanded={hasMenu ? isOpen : undefined}
-                      aria-controls={hasMenu ? 'site-mega-panel' : undefined}
+                      aria-expanded={hasMega ? isOpen : undefined}
+                      aria-controls={hasMega ? 'site-mega-panel' : undefined}
                     >
                       {item.label}
-                      {hasMenu && (
+                      {hasMega && (
                         <ChevronDown
                           className={`h-3.5 w-3.5 opacity-70 transition-transform duration-300 ${
                             isOpen ? 'rotate-180' : ''
@@ -361,7 +336,7 @@ export default function Navbar() {
             <button
               type="button"
               className={`inline-flex items-center justify-center p-2 lg:hidden ${
-                onLight ? 'text-brand-secondary' : 'text-white'
+                mobileOpen ? 'relative z-[106] text-brand-secondary' : 'text-white'
               }`}
               aria-expanded={mobileOpen}
               aria-controls="site-mobile-menu"
@@ -377,14 +352,14 @@ export default function Navbar() {
           </div>
         </nav>
 
-        {/* Floating mega pane */}
+        {/* Floating mega pane — light surface */}
         <div className="pointer-events-none absolute left-0 right-0 top-full hidden px-4 pt-1 md:px-5 lg:block lg:px-6">
           <motion.div
             id="site-mega-panel"
             role="region"
             aria-label={activeItem ? `${activeItem.label} menu` : 'Menu'}
             aria-hidden={!megaOpen}
-            className="pointer-events-auto mx-auto max-w-[1100px] overflow-hidden rounded-xl bg-white shadow-[0_24px_60px_rgba(15,23,42,0.22)]"
+            className="pointer-events-auto mx-auto max-w-[1100px] overflow-hidden rounded-xl border border-brand-secondary/10 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.18)]"
             initial={false}
             animate={{
               height: megaOpen ? panelHeight : 0,
@@ -436,7 +411,7 @@ export default function Navbar() {
             role="dialog"
             aria-modal="true"
             aria-label="Site menu"
-            className="fixed inset-0 z-[105] flex flex-col bg-white pt-[4.5rem] font-sans lg:hidden"
+            className="fixed inset-0 z-[105] flex flex-col bg-white pt-[4.5rem] font-sans text-brand-secondary lg:hidden"
             initial={{ opacity: reduce ? 1 : 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: reduce ? 1 : 0 }}
@@ -488,12 +463,12 @@ export default function Navbar() {
                               transition={{ duration: reduce ? 0 : 0.32, ease }}
                               className="overflow-hidden"
                             >
-                              <ul className="space-y-4 pb-5 pl-1">
+                              <ul className="space-y-1 pb-5 pl-1">
                                 {item.entries!.map((entry) => (
                                   <li key={entry.title}>
                                     <a
                                       href={entry.href}
-                                      className="block"
+                                      className="block rounded-lg px-2 py-2.5 transition-colors hover:bg-black/[0.04]"
                                       onClick={() => setMobileOpen(false)}
                                     >
                                       <p className="text-[0.9375rem] font-semibold text-brand-secondary">
@@ -527,7 +502,7 @@ export default function Navbar() {
             <div className="border-t border-brand-secondary/10 px-5 py-6">
               <a
                 href="#contact"
-                className="flex w-full items-center justify-center rounded-full border border-brand-secondary px-4 py-3 text-[0.9375rem] font-medium text-brand-secondary"
+                className="flex w-full items-center justify-center rounded-full border border-brand-secondary px-4 py-3 text-[0.9375rem] font-medium text-brand-secondary transition-colors hover:bg-brand-secondary hover:text-white"
                 onClick={() => setMobileOpen(false)}
               >
                 Contact

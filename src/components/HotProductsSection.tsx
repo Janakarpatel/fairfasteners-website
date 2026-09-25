@@ -50,7 +50,7 @@ export default function HotProductsSection() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="bg-white font-sans text-brand-secondary">
+    <section className="bg-transparent font-sans text-white">
       <div className="mx-auto w-full max-w-[1600px] px-6 py-12 md:px-8 md:py-14 lg:px-10 lg:py-16">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 14 }}
@@ -58,22 +58,22 @@ export default function HotProductsSection() {
           viewport={{ once: true, margin: '-60px' }}
           transition={{ duration: reduce ? 0 : 0.65, ease }}
         >
-          <p className="text-[0.8125rem] text-brand-secondary/45">
-            <Link href="/" className="transition-colors hover:text-brand-secondary">
+          <p className="text-[0.8125rem] text-white/45">
+            <Link href="/" className="transition-colors hover:text-white">
               Home
             </Link>
             <span className="mx-1.5" aria-hidden>
               /
             </span>
-            <Link href="/products" className="transition-colors hover:text-brand-secondary">
+            <Link href="/products" className="transition-colors hover:text-white">
               Products
             </Link>
             <span className="mx-1.5" aria-hidden>
               /
             </span>
-            <span className="text-brand-secondary/70">Catalog</span>
+            <span className="text-white/70">Catalog</span>
           </p>
-          <h2 className="mt-4 text-[clamp(1.75rem,4vw,3rem)] font-semibold uppercase tracking-tight text-brand-secondary">
+          <h2 className="mt-4 text-[clamp(1.75rem,4vw,3rem)] font-semibold uppercase tracking-tight text-white">
             Products
           </h2>
         </motion.div>
@@ -106,9 +106,9 @@ export default function HotProductsSection() {
             >
               <Link
                 href={cat.href}
-                className="group relative flex aspect-[4/3] flex-col bg-[#f2f2f2] p-2.5 outline-none transition-colors duration-300 hover:bg-[#ececec] md:aspect-[3/2] md:p-3"
+                className="group relative flex aspect-[4/3] flex-col border border-white/10 bg-white/[0.06] p-2.5 outline-none transition-colors duration-300 hover:bg-white/[0.1] md:aspect-[3/2] md:p-3"
               >
-                <p className="relative z-10 text-[0.8125rem] text-brand-secondary/45">
+                <p className="relative z-10 text-[0.8125rem] text-white/45">
                   {cat.count} items
                 </p>
 
@@ -125,11 +125,11 @@ export default function HotProductsSection() {
                 </div>
 
                 <div className="relative z-10 mt-auto flex items-end justify-between gap-3">
-                  <h3 className="text-base font-medium tracking-tight text-brand-secondary md:text-lg">
+                  <h3 className="text-base font-medium tracking-tight text-white md:text-lg">
                     {cat.title}
                   </h3>
                   <span
-                    className="inline-flex h-9 w-9 shrink-0 translate-y-6 items-center justify-center rounded-full bg-brand-primary text-white opacity-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-none"
+                    className="inline-flex h-9 w-9 shrink-0 translate-y-6 items-center justify-center rounded-full bg-white text-brand-field opacity-0 transition-all duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:translate-y-0 motion-reduce:transition-none"
                     aria-hidden
                   >
                     <ArrowRight className="h-4 w-4" strokeWidth={2} />

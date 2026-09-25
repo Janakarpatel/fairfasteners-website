@@ -1,22 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  /* Brand palette */
+  /* Near-black field (Williams-style); brand green reserved for accents/CTAs */
+  --brand-field: #070908;
+  --brand-field-deep: #000000;
   --brand-primary: #0c393e;
   --brand-surface: #f2f2f2;
   --brand-secondary: #1f2f3e;
   --brand-primary-hover: color-mix(in srgb, var(--brand-primary) 82%, black);
-  /* Warm section backgrounds (hero-adjacent bands) */
   --brand-warm: #eae1d6;
   --brand-warm-ink: #2d2926;
 
-  --background: var(--brand-surface);
-  --foreground: var(--brand-secondary);
+  --background: var(--brand-field);
+  --foreground: var(--brand-surface);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-brand-field: var(--brand-field);
+  --color-brand-field-deep: var(--brand-field-deep);
   --color-brand-primary: var(--brand-primary);
   --color-brand-surface: var(--brand-surface);
   --color-brand-secondary: var(--brand-secondary);
@@ -31,16 +34,10 @@
     Consolas, "Liberation Mono", "Courier New", monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: var(--brand-secondary);
-    --foreground: var(--brand-surface);
-  }
-}
-
 html {
   scrollbar-width: none;
   -ms-overflow-style: none;
+  color-scheme: dark;
 }
 
 html::-webkit-scrollbar {
@@ -89,4 +86,3 @@ body::-webkit-scrollbar {
   object-fit: contain;
   transform: translate(-50%, -50%);
 }
-

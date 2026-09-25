@@ -13,19 +13,21 @@ alwaysApply: true
 - **Optional 3D:** `@splinetool/react-spline` with dynamic `ssr: false`; scene URL `NEXT_PUBLIC_SPLINE_SCENE_URL` (`.splinecode` URL) if a Spline hero background is used.
 
 ## Brand palette (`globals.css` → Tailwind)
-- **`--brand-primary`:** `#0c393e` — CTAs, accents, hover targets (`bg-brand-primary`, `text-brand-primary`, `hover:bg-brand-primary-hover`).
-- **`--brand-surface`:** `#f2f2f2` — page/hero background (`bg-brand-surface`).
-- **`--brand-secondary`:** `#1f2f3e` — body text default, footer background (`bg-brand-secondary`).
+- **`--brand-field`:** `#070908` — near-black page field (`bg-brand-field`), Williams-style. Deep companion: `--brand-field-deep` `#000000`.
+- **`--brand-primary`:** `#0c393e` — brand green for CTAs, accents, soft ambient touches only (not full-section washes).
+- **`--brand-surface`:** `#f2f2f2` — light ink / accents on dark (`--foreground`).
+- **`--brand-secondary`:** `#1f2f3e` — deeper navy accent (prefer white/opacity on dark sections).
 - **`--brand-primary-hover`:** `color-mix` darker primary for buttons.
-- **`--background` / `--foreground`:** tied to surface + secondary in light mode; flip in `prefers-color-scheme: dark`.
+- **`--background` / `--foreground`:** field + surface (dark theme by default; `color-scheme: dark`).
 
 ## Global UX
+- **Theme:** Near-black with a **fixed center brand-green glow** (`BrandBackdrop` in layout) that stays while scrolling — like Williams’ blue stage / Coming Soon atmosphere. Sections stay transparent so the glow shows through. Hero adds the 3D dotted scene on top.
 - **Scrollbars hidden** on `html` and `body` (`scrollbar-width: none`, `::-webkit-scrollbar { display: none }`) — scrolling still works.
 
 ## Layout / UI conventions
-- **Navbar:** Transparent background; logo + flat nav links grouped **left** (Products, Solutions, Sustainability, Company, News); **Contact** as bracket-style control on the right; mobile hamburger + animated panel (`AnimatePresence`). Tight edge padding has been requested (`px-1 py-1` era); confirm with current `Navbar.tsx`.
-- **Hero:** Full-viewport feel with **`min-h-[calc(100dvh-4rem)]`** (reserve ~4rem for navbar — avoids bottom text clipped when navbar is in flow). Content **`justify-end`**, intro paragraph then large **two-line** headline; **`px-6`** horizontal padding; use valid Tailwind only (avoid invalid utilities like `pb-15`, `text-normal`).
-- **Footer:** **`bg-brand-secondary`** with white / `white/80` text.
+- **Navbar:** Transparent background; white links/CTAs on dark; mega + mobile panels use `bg-brand-field` + white type. Logo + nav links; **Contact** on the right; mobile hamburger + animated panel (`AnimatePresence`).
+- **Hero:** Full-viewport (`min-h-[100dvh]`) with AmbientBackground + dotted scene; white type; content `justify-end`.
+- **Footer:** `bg-brand-field` + AmbientBackground (no scene); white / `white/80` text.
 - **Animations:** Prefer slower, eased motion (`ease` ~ `[0.16, 1, 0.3, 1]`); staggered hero; navbar load + mobile menu; footer `whileInView` + column stagger. Soften springs for buttons/links (lower stiffness).
 
 ## Code style (user preferences)

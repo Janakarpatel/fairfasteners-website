@@ -1,8 +1,8 @@
 'use client';
 
-import Image from 'next/image';
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowDown } from 'lucide-react';
+import AmbientBackground from '@/components/AmbientBackground';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -10,60 +10,8 @@ export default function Hero() {
   const reduce = useReducedMotion();
 
   return (
-    <section className="relative isolate min-h-[100dvh] w-full overflow-hidden bg-brand-secondary font-sans antialiased text-white">
-      {/* Full-bleed atmosphere + primary grain gradient */}
-      <div className="pointer-events-none absolute inset-0" aria-hidden>
-        <Image
-          src="/images/infrastructure.jpg"
-          alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-center scale-105"
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `
-              linear-gradient(
-                165deg,
-                color-mix(in srgb, var(--brand-primary) 72%, transparent) 0%,
-                color-mix(in srgb, var(--brand-primary) 38%, transparent) 42%,
-                color-mix(in srgb, var(--brand-primary) 55%, transparent) 100%
-              )
-            `,
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-primary/80 via-brand-primary/25 to-brand-primary/40" />
-        <div
-          className="absolute inset-0 opacity-50 mix-blend-soft-light"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E\")",
-            backgroundSize: '160px 160px',
-          }}
-        />
-        <div
-          className="absolute inset-0 opacity-[0.35] mix-blend-overlay"
-          style={{
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.55 0 0 0 0 0.55 0 0 0 0 0.55 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E\")",
-            backgroundSize: '140px 140px',
-          }}
-        />
-        <div
-          className="absolute inset-0 opacity-40 mix-blend-multiply"
-          style={{
-            background: `
-              radial-gradient(
-                ellipse 90% 70% at 50% 100%,
-                var(--brand-primary) 0%,
-                transparent 70%
-              )
-            `,
-          }}
-        />
-      </div>
+    <section className="relative min-h-[100dvh] w-full overflow-visible bg-transparent font-sans antialiased text-white">
+      <AmbientBackground reduce={reduce} scene intensity="hero" />
 
       {/* Bottom hero copy */}
       <div className="relative z-10 flex min-h-[100dvh] flex-col justify-end px-5 pb-6 pt-28 md:px-5 md:pb-8 lg:px-6 lg:pb-8">

@@ -4,6 +4,7 @@ import PageContainer from '@/components/PageContainer';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getNewsBySlug, getNewsItems } from '@/lib/news';
+import { pageMetadata } from '@/lib/seo';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -20,11 +21,18 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const item = getNewsBySlug(slug);
-  if (!item) return { title: 'News — Fair Fasteners' };
-  return {
-    title: `${item.title} — Fair Fasteners`,
+  if (!item) {
+    return pageMetadata({
+      title: 'News',
+      description: 'News and field stories from Fair Fasteners.',
+      path: '/news',
+    });
+  }
+  return pageMetadata({
+    title: item.title,
     description: item.excerpt,
-  };
+    path: `/news/${item.slug}`,
+  });
 }
 
 export default async function NewsArticlePage({ params }: Props) {
@@ -33,28 +41,28 @@ export default async function NewsArticlePage({ params }: Props) {
   if (!item) notFound();
 
   return (
-    <main className="bg-brand-surface font-sans">
+    <main className="bg-transparent font-sans text-white">
       <PageContainer width="narrow">
         <BackNav
           href="/news"
           label="Back to news"
           className="mb-8"
           trailing={
-            <p className="font-jetbrains text-[0.6875rem] uppercase tracking-[0.12em] text-brand-secondary/55">
+            <p className="font-jetbrains text-[0.6875rem] uppercase tracking-[0.12em] text-white/50">
               {item.field} · {formatDate(item.date)}
             </p>
           }
         />
 
-        <h1 className="text-4xl leading-[1.05] tracking-tight text-brand-secondary md:text-5xl">
+        <h1 className="text-4xl leading-[1.05] tracking-tight text-white md:text-5xl">
           {item.title}
         </h1>
-        <p className="mt-4 text-base font-light leading-relaxed text-brand-secondary/75 md:text-lg">
+        <p className="mt-4 text-base font-light leading-relaxed text-white/65 md:text-lg">
           {item.excerpt}
         </p>
 
         {item.image ? (
-          <div className="mt-10 overflow-hidden border border-brand-secondary/15 bg-white/30">
+          <div className="mt-10 overflow-hidden border border-white/12 bg-white/[0.05]">
             <div className="relative aspect-[16/9]">
               <Image
                 src={item.image}
@@ -68,7 +76,7 @@ export default async function NewsArticlePage({ params }: Props) {
           </div>
         ) : null}
 
-        <article className="mt-10 space-y-6 text-[0.975rem] font-light leading-relaxed text-brand-secondary/85 md:text-[1.0625rem]">
+        <article className="mt-10 space-y-6 text-[0.975rem] font-light leading-relaxed text-white/80 md:text-[1.0625rem]">
           {(item.body?.length ? item.body : []).map((p, idx) => (
             <p key={idx}>{p}</p>
           ))}
@@ -77,4 +85,3 @@ export default async function NewsArticlePage({ params }: Props) {
     </main>
   );
 }
-

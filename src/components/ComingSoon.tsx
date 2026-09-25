@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import gsap from 'gsap';
 import contactData from '@/data/contact.json';
-import DottedScene from '@/components/DottedScene';
+import AmbientBackground from '@/components/AmbientBackground';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -171,8 +171,8 @@ function LocationHoverButton({
           </span>
         ))}
       </span>
-      <span className="mt-1.5 block text-[0.65rem] tracking-[0.04em] text-white/0 transition-colors duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/loc:text-white/55 group-focus-visible/loc:text-white/55">
-        View map
+      <span className="mt-1.5 block text-[0.65rem] tracking-[0.04em] text-white/45 transition-colors duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover/loc:text-white/70 group-focus-visible/loc:text-white/70 sm:text-white/0 sm:group-hover/loc:text-white/55">
+        View on map
       </span>
     </button>
   );
@@ -190,6 +190,13 @@ function LogoPinMap() {
         className="pointer-events-none h-full w-full border-0"
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
+      />
+      <a
+        href={contactData.maps.placeUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Open in Google Maps"
+        className="absolute left-2 top-2 z-[2] h-[72px] w-[220px] cursor-pointer"
       />
       <div className="pointer-events-none absolute left-1/2 top-1/2 z-[1] -translate-x-1/2 -translate-y-full">
         <div className="ff-map-pin">
@@ -223,7 +230,7 @@ function LocationMapDialog({
     <AnimatePresence>
       {open && (
         <motion.div
-          className="fixed inset-0 z-[200] flex items-end justify-center p-3 sm:items-center sm:px-4 sm:py-8"
+          className="fixed inset-0 z-[200] flex items-end justify-center sm:items-center sm:p-4"
           initial={{ opacity: reduce ? 1 : 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: reduce ? 1 : 0 }}
@@ -239,7 +246,7 @@ function LocationMapDialog({
             role="dialog"
             aria-modal="true"
             aria-labelledby="location-map-title"
-            className="relative z-10 max-h-[92dvh] w-full max-w-3xl overflow-y-auto overflow-x-hidden rounded-lg border border-white/15 bg-[#0b3d36] shadow-[0_24px_80px_rgba(0,0,0,0.45)]"
+            className="relative z-10 max-h-[90dvh] w-full max-w-3xl overflow-y-auto overflow-x-hidden rounded-t-2xl border border-white/15 bg-brand-field shadow-[0_24px_80px_rgba(0,0,0,0.45)] sm:rounded-lg"
             initial={{ opacity: reduce ? 1 : 0, y: reduce ? 0 : 16, scale: reduce ? 1 : 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: reduce ? 1 : 0, y: reduce ? 0 : 10, scale: reduce ? 1 : 0.98 }}
@@ -271,22 +278,14 @@ function LocationMapDialog({
             <div className="aspect-[4/3] w-full overflow-hidden bg-[#d9e2dc] sm:aspect-[2/1]">
               <LogoPinMap />
             </div>
-            <div className="flex flex-col gap-2 px-4 py-4 sm:flex-row sm:flex-wrap sm:px-5">
+            <div className="flex items-center justify-center gap-2 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:justify-start sm:px-5 sm:pb-4">
               <a
                 href={contactData.maps.directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-md bg-brand-surface px-4 py-2.5 text-sm text-brand-secondary hover:bg-white sm:py-2"
+                className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-surface px-4 py-2.5 text-sm text-brand-secondary hover:bg-white sm:min-h-0 sm:w-auto sm:py-2"
               >
                 Directions
-              </a>
-              <a
-                href={contactData.maps.placeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center rounded-md border border-white/25 px-4 py-2.5 text-sm text-brand-surface/90 hover:border-white hover:text-white sm:py-2"
-              >
-                Open in Google Maps
               </a>
             </div>
           </motion.div>
@@ -296,41 +295,34 @@ function LocationMapDialog({
   );
 }
 
-function AmbientBackground({ reduce }: { reduce: boolean | null }) {
-  return (
-    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      <div className="absolute inset-0 bg-[#0b3d36]" />
-      <DottedScene reduce={reduce} />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#06221e]/50 via-transparent to-[#0b3d36]/25" />
-    </div>
-  );
-}
-
 export default function ComingSoon() {
   const reduce = useReducedMotion();
   const [mapOpen, setMapOpen] = useState(false);
 
   return (
-    <main className="relative flex min-h-[100dvh] w-full flex-col justify-start overflow-x-hidden overflow-y-auto font-sans text-brand-surface md:justify-end">
-      <AmbientBackground reduce={reduce} />
+    <main className="relative flex min-h-[100dvh] w-full flex-col overflow-x-hidden font-sans text-brand-surface">
+      <AmbientBackground reduce={reduce} scene intensity="hero" fill />
 
-      <motion.div
-        className="pointer-events-none absolute inset-x-0 top-0 z-20"
+      <motion.header
+        className="relative z-20 shrink-0"
         initial={{ opacity: reduce ? 1 : 0, y: reduce ? 0 : -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reduce ? 0 : 0.7, ease }}
       >
-        <div className="mx-auto flex h-16 w-full max-w-[1600px] items-center px-4 md:h-20 md:px-8 lg:px-10">
+        <div className="mx-auto flex h-14 w-full max-w-[1600px] items-center justify-between px-4 md:h-20 md:px-8 lg:px-10">
           <img
             src="/company_logo.png"
             alt="Fair Fasteners"
-            className="h-7 w-auto object-contain"
+            className="h-6 w-auto object-contain md:h-7"
           />
+          <p className="font-mono text-[0.55rem] uppercase tracking-[0.16em] text-brand-surface/45 md:text-[0.6rem]">
+            since 1974
+          </p>
         </div>
-      </motion.div>
+      </motion.header>
 
       <motion.div
-        className="relative z-10 mx-auto w-full max-w-[1600px] px-4 pb-16 pt-24 md:px-8 md:pb-14 md:pt-8 lg:px-10"
+        className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-end px-4 pb-[max(3.25rem,calc(env(safe-area-inset-bottom)+2.5rem))] pt-6 md:px-8 md:pb-14 md:pt-8 lg:px-10"
         initial="hidden"
         animate="visible"
         variants={{
@@ -344,7 +336,7 @@ export default function ComingSoon() {
         }}
       >
         <motion.p
-          className="font-mono text-[0.7rem] uppercase tracking-[0.16em] text-brand-surface/55"
+          className="font-mono text-[0.65rem] uppercase tracking-[0.16em] text-brand-surface/55 md:text-[0.7rem]"
           variants={{
             hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 14 },
             visible: {
@@ -358,7 +350,7 @@ export default function ComingSoon() {
         </motion.p>
 
         <motion.h1
-          className="mt-3 max-w-4xl text-[clamp(2rem,10vw,5.5rem)] leading-[0.98] tracking-tighter text-brand-surface"
+          className="mt-2 max-w-4xl text-[clamp(1.85rem,8.2vw,5.5rem)] leading-[1.02] tracking-tighter text-brand-surface md:mt-3 md:leading-[0.98]"
           variants={{
             hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 22 },
             visible: {
@@ -374,7 +366,7 @@ export default function ComingSoon() {
         </motion.h1>
 
         <motion.p
-          className="mt-5 w-fit max-w-full text-sm font-light leading-snug text-brand-surface/75 md:text-base"
+          className="mt-4 text-[0.8125rem] font-light leading-relaxed text-brand-surface/75 md:mt-5 md:text-base md:leading-snug"
           variants={{
             hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 16 },
             visible: {
@@ -384,14 +376,14 @@ export default function ComingSoon() {
             },
           }}
         >
-          <span className="block sm:whitespace-nowrap">Apologies the site is still taking shape.</span>
-          <span className="block sm:whitespace-nowrap">
+          <span className="block md:whitespace-nowrap">Apologies the site is still taking shape.</span>
+          <span className="block md:whitespace-nowrap">
             Specs, quotes, sales, and supply are open, write or call, we&apos;re here at your service.
           </span>
         </motion.p>
 
         <motion.div
-          className="mt-8 grid max-w-3xl gap-6 border-t border-white/15 pt-6 sm:grid-cols-3 sm:gap-8 sm:pt-8 [&>div]:min-w-0"
+          className="mt-8 grid grid-cols-1 border-t border-white/15 pt-6 sm:max-w-5xl sm:grid-cols-[auto_auto_max-content] sm:gap-x-6 sm:gap-y-4 sm:pt-6"
           variants={{
             hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 14 },
             visible: {
@@ -401,7 +393,7 @@ export default function ComingSoon() {
             },
           }}
         >
-          <div>
+          <div className="min-w-0">
             <p className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-brand-surface/45">
               Phone
             </p>
@@ -416,7 +408,7 @@ export default function ComingSoon() {
               ))}
             </div>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-brand-surface/45">
               Email
             </p>
@@ -453,7 +445,7 @@ export default function ComingSoon() {
         href="https://janakarpatel.vercel.app/"
         target="_blank"
         rel="noopener noreferrer"
-        className="absolute bottom-[max(0.75rem,env(safe-area-inset-bottom))] right-4 z-20 text-[10px] leading-none text-brand-surface/40 hover:text-brand-surface md:bottom-6 md:right-8 md:text-[11px] lg:right-10"
+        className="absolute bottom-[max(0.65rem,env(safe-area-inset-bottom))] right-4 z-20 text-[9px] leading-none text-brand-surface/40 hover:text-brand-surface md:bottom-6 md:right-8 md:text-[11px] lg:right-10"
       >
         Designed by Janakar Patel
       </a>

@@ -3,11 +3,14 @@ import Image from 'next/image';
 import BackNav from '@/components/BackNav';
 import PageContainer from '@/components/PageContainer';
 import { getNewsItems } from '@/lib/news';
+import { pageMetadata } from '@/lib/seo';
 
-export const metadata = {
-  title: 'News — Fair Fasteners',
-  description: 'Updates and stories from solutions in the field.',
-};
+export const metadata = pageMetadata({
+  title: 'News',
+  description:
+    'News and field stories from Fair Fasteners on industrial fastener supply, coatings, kitting, and project hardware.',
+  path: '/news',
+});
 
 function formatDate(iso: string) {
   const [y, m, d] = iso.split('-');
@@ -19,19 +22,19 @@ export default function NewsPage() {
   const items = getNewsItems();
 
   return (
-    <main className="bg-brand-surface font-sans">
+    <main className="bg-transparent font-sans text-white">
       <PageContainer>
         <BackNav href="/" label="Back to home" className="mb-10" />
         <div className="max-w-3xl">
-          <p className="font-jetbrains text-[0.7rem] uppercase tracking-[0.14em] text-brand-secondary/60">
+          <p className="font-jetbrains text-[0.7rem] uppercase tracking-[0.14em] text-white/55">
             News
           </p>
-          <h1 className="mt-3 text-5xl leading-[1.02] tracking-tight text-brand-secondary md:text-6xl">
+          <h1 className="mt-3 text-5xl leading-[1.02] tracking-tight text-white md:text-6xl">
             Solutions in the field
           </h1>
-          <p className="mt-4 text-sm font-light leading-relaxed text-brand-secondary/75 md:text-base">
+          <p className="mt-4 text-sm font-light leading-relaxed text-white/65 md:text-base">
             Articles are managed in{' '}
-            <code className="font-medium text-brand-secondary">src/data/news.json</code>.
+            <code className="font-medium text-white/85">src/data/news.json</code>.
           </p>
         </div>
 
@@ -39,14 +42,14 @@ export default function NewsPage() {
           {items.map((item) => (
             <article
               key={item.id}
-              className="group relative overflow-hidden border border-brand-secondary/20 bg-white/50 backdrop-blur-sm transition-colors hover:border-brand-secondary/35 motion-reduce:transition-none"
+              className="group relative overflow-hidden border border-white/12 bg-white/[0.06] backdrop-blur-sm transition-colors hover:border-white/25 hover:bg-white/[0.1] motion-reduce:transition-none"
             >
               <Link href={item.href ?? `/news/${item.slug}`} className="absolute inset-0 z-10">
                 <span className="sr-only">Read {item.title}</span>
               </Link>
 
               {item.image ? (
-                <div className="relative aspect-[16/9] border-b border-brand-secondary/15">
+                <div className="relative aspect-[16/9] border-b border-white/10">
                   <Image
                     src={item.image}
                     alt=""
@@ -61,17 +64,17 @@ export default function NewsPage() {
 
               <div className="p-6">
                 <div className="flex items-center justify-between gap-4">
-                  <p className="font-jetbrains text-[0.6875rem] uppercase tracking-[0.12em] text-brand-secondary/65">
+                  <p className="font-jetbrains text-[0.6875rem] uppercase tracking-[0.12em] text-white/55">
                     {item.field}
                   </p>
-                  <p className="font-jetbrains text-[0.6875rem] uppercase tracking-[0.12em] text-brand-secondary/55">
+                  <p className="font-jetbrains text-[0.6875rem] uppercase tracking-[0.12em] text-white/45">
                     {formatDate(item.date)}
                   </p>
                 </div>
-                <h2 className="mt-4 text-xl font-medium leading-snug tracking-tight text-brand-secondary">
+                <h2 className="mt-4 text-xl font-medium leading-snug tracking-tight text-white underline-offset-[5px] transition-[text-decoration-color] duration-300 group-hover:underline group-hover:decoration-white/70">
                   {item.title}
                 </h2>
-                <p className="mt-3 text-sm font-light leading-relaxed text-brand-secondary/75">
+                <p className="mt-3 text-sm font-light leading-relaxed text-white/65">
                   {item.excerpt}
                 </p>
               </div>
@@ -82,4 +85,3 @@ export default function NewsPage() {
     </main>
   );
 }
-

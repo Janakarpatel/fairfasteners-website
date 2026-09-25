@@ -116,7 +116,7 @@ export default function NewsSection({
                   </p>
                 </div>
 
-                <h3 className="mt-4 text-xl font-medium leading-snug tracking-tight text-brand-secondary">
+                <h3 className="mt-4 text-xl font-medium leading-snug tracking-tight text-brand-secondary underline-offset-[5px] transition-[text-decoration-color] duration-300 group-hover:underline group-hover:decoration-brand-secondary/70">
                   {item.title}
                 </h3>
                 <p className="mt-3 text-sm font-light leading-relaxed text-brand-secondary/75">

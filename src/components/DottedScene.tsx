@@ -50,27 +50,6 @@ const particleFrag = /* glsl */ `
   }
 `;
 
-const envVert = /* glsl */ `
-  varying vec2 vUv;
-  void main() {
-    vUv = uv;
-    gl_Position = vec4(position.xy, 0.0, 1.0);
-  }
-`;
-
-const envFrag = /* glsl */ `
-  varying vec2 vUv;
-  uniform vec3 uBg;
-
-  void main() {
-    vec3 col = uBg;
-    vec2 c = vUv - vec2(0.5, 0.46);
-    col += vec3(0.035, 0.18, 0.1) * (1.0 - smoothstep(0.08, 0.7, length(c * vec2(1.15, 1.0))));
-    col *= 1.0 - 0.12 * length(vUv - vec2(0.5, 0.55));
-    gl_FragColor = vec4(col, 1.0);
-  }
-`;
-
 function sdEllipsoid(x: number, y: number, z: number, rx: number, ry: number, rz: number) {
   const k0 = Math.sqrt((x / rx) ** 2 + (y / ry) ** 2 + (z / rz) ** 2);
   const k1 = Math.sqrt((x / (rx * rx)) ** 2 + (y / (ry * ry)) ** 2 + (z / (rz * rz)) ** 2);
@@ -176,13 +155,13 @@ function voxelizeRivets(resolution: number) {
     sdfSolidRivet,
     [r, r, r],
     [1.45, 1.55, 1.45],
-    [-1.48, 0.19, 0],
+    [-1.05, 0.19, 0],
     positions,
     shades,
     normals,
     { density: 0.72 },
   );
-  const popOffset = [1.48, 1.65, 0] as const;
+  const popOffset = [1.05, 1.45, 0] as const;
   voxelizeSdf(
     sdfSolidRivet,
     [Math.max(24, Math.floor(r * 0.85)), Math.max(28, Math.floor(r * 0.95)), Math.max(24, Math.floor(r * 0.85))],
@@ -211,7 +190,23 @@ function voxelizeRivets(resolution: number) {
   return geometry;
 }
 
-export default function DottedScene({ reduce = false }: { reduce?: boolean | null }) {
+/**
+ * Zoomed dotted rivets on a transparent canvas so the fixed BrandBackdrop
+ * green circle shows through and stays put while scrolling.
+ *
+ * When pinBleed is set, the canvas extends below the hero so the pop
+ * mandrel tip continues into the next section instead of clipping.
+ */
+export default function DottedScene({
+  reduce = false,
+  pinBleed = false,
+  animate = false,
+}: {
+  reduce?: boolean | null;
+  pinBleed?: boolean;
+  /** Slow spin + pointer sway. Coming Soon only — the live hero stays a fixed pose. */
+  animate?: boolean;
+}) {
   const hostRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -223,38 +218,55 @@ export default function DottedScene({ reduce = false }: { reduce?: boolean | nul
 
     const renderer = new THREE.WebGLRenderer({
       antialias: false,
-      alpha: false,
+      alpha: true,
       powerPreference: 'high-performance',
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobile ? 1.5 : 2));
     renderer.setSize(host.clientWidth, host.clientHeight);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.autoClear = false;
+    renderer.setClearColor(0x000000, 0);
+    renderer.autoClear = true;
     host.appendChild(renderer.domElement);
 
-    const aspect = host.clientWidth / Math.max(host.clientHeight, 1);
-    const frustum = mobile ? 3.85 : 3.2;
-    const panX = mobile ? 0.2 : 1.65;
+    const framing = (nw: number, nh: number) => {
+      const a = nw / Math.max(nh, 1);
+      const isMobile = nw < 768;
+      const px = isMobile ? 0.08 : 0.75;
+      const pointScale = isMobile ? 11 : 16;
+      /* Pull back so solid doesn’t feel oversized / wide */
+      const hSpan = isMobile ? 2.45 : 2.2;
+      /* Shift view up in world → rivets sit lower, clear of navbar */
+      const yShift = isMobile ? 0.55 : 0.7;
+
+      if (pinBleed) {
+        const top = (isMobile ? 1.55 : 1.35) + yShift;
+        const bottom = (isMobile ? -3.5 : -3.2) + yShift;
+        return { a, top, bottom, hSpan, px, pointScale };
+      }
+
+      const f = hSpan;
+      return {
+        a,
+        top: f * 0.92 + yShift,
+        bottom: -f * 1.08 + yShift,
+        hSpan,
+        px,
+        pointScale,
+      };
+    };
+
+    const init = framing(host.clientWidth, host.clientHeight);
+    const a0 = host.clientWidth / Math.max(host.clientHeight, 1);
     const camera = new THREE.OrthographicCamera(
-      -frustum * aspect - panX,
-      frustum * aspect - panX,
-      frustum,
-      -frustum,
+      -init.hSpan * a0 - init.px,
+      init.hSpan * a0 - init.px,
+      init.top,
+      init.bottom,
       0.1,
       40,
     );
     camera.position.set(0, 0, 8);
-    camera.lookAt(0, 0, 0);
-
-    const envScene = new THREE.Scene();
-    const envMat = new THREE.ShaderMaterial({
-      vertexShader: envVert,
-      fragmentShader: envFrag,
-      uniforms: { uBg: { value: new THREE.Color('#0b3d36') } },
-      depthWrite: false,
-    });
-    envScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), envMat));
-    const envCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+    camera.lookAt(0.1, -0.35, 0);
 
     const scene = new THREE.Scene();
     const geometry = voxelizeRivets(resolution);
@@ -264,7 +276,7 @@ export default function DottedScene({ reduce = false }: { reduce?: boolean | nul
       transparent: true,
       depthWrite: false,
       uniforms: {
-        uPointScale: { value: mobile ? 9.5 : 16.5 },
+        uPointScale: { value: init.pointScale },
         uLightDir: { value: new THREE.Vector3(0.55, 0.7, 0.55).normalize() },
         uColor: { value: new THREE.Color('#f2f6f5') },
       },
@@ -272,78 +284,67 @@ export default function DottedScene({ reduce = false }: { reduce?: boolean | nul
     const points = new THREE.Points(geometry, material);
     scene.add(points);
 
+    const baseEuler = new THREE.Euler(0.32, -0.48, 0.05, 'XYZ');
+    const baseQ = new THREE.Quaternion().setFromEuler(baseEuler);
+    const baseScale = 0.92;
+    const baseY = -0.42;
+    points.quaternion.copy(baseQ);
+    points.scale.setScalar(baseScale);
+    points.position.set(0, baseY, 0);
+
     const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
     const onPointer = (e: PointerEvent) => {
       pointer.tx = (e.clientX / window.innerWidth) * 2 - 1;
       pointer.ty = (e.clientY / window.innerHeight) * 2 - 1;
     };
-    window.addEventListener('pointermove', onPointer, { passive: true });
+    if (animate && !reduce) {
+      window.addEventListener('pointermove', onPointer, { passive: true });
+    }
 
     const clock = new THREE.Clock();
+    const spinEuler = new THREE.Euler(0, 0, 0, 'XYZ');
     let frame = 0;
-    const euler = new THREE.Euler();
-    const q = new THREE.Quaternion();
 
-    const poseAt = (t: number) => {
-      euler.set(
-        0.18 + Math.sin(t * 0.14) * 0.04 - pointer.y * 0.1,
-        t * 0.12 + pointer.x * 0.18,
-        0.06 + Math.sin(t * 0.1) * 0.03,
-        'XYZ',
-      );
-      q.setFromEuler(euler);
-      points.quaternion.copy(q);
-      points.position.set(
-        pointer.x * 0.08,
-        Math.sin(t * 0.22) * 0.04 - pointer.y * 0.05,
-        0,
-      );
+    const render = () => {
+      if (animate && !reduce) {
+        const t = clock.getElapsedTime();
+        pointer.x += (pointer.tx - pointer.x) * 0.045;
+        pointer.y += (pointer.ty - pointer.y) * 0.045;
+        spinEuler.set(
+          baseEuler.x + Math.sin(t * 0.14) * 0.04 - pointer.y * 0.1,
+          baseEuler.y + t * 0.12 + pointer.x * 0.18,
+          baseEuler.z + Math.sin(t * 0.1) * 0.03,
+          'XYZ',
+        );
+        points.quaternion.setFromEuler(spinEuler);
+        points.position.set(pointer.x * 0.05, baseY - pointer.y * 0.035, 0);
+      }
+      renderer.render(scene, camera);
     };
 
     const onResize = () => {
       const nw = Math.max(host.clientWidth, 1);
       const nh = Math.max(host.clientHeight, 1);
-      const a = nw / nh;
-      const isMobile = nw < 768;
-      const f = isMobile ? 3.85 : 3.2;
-      const p = isMobile ? 0.2 : 1.65;
-      camera.left = -f * a - p;
-      camera.right = f * a - p;
-      camera.top = f;
-      camera.bottom = -f;
+      const { a, top, bottom, hSpan, px, pointScale } = framing(nw, nh);
+      camera.left = -hSpan * a - px;
+      camera.right = hSpan * a - px;
+      camera.top = top;
+      camera.bottom = bottom;
       camera.updateProjectionMatrix();
       renderer.setSize(nw, nh);
-      material.uniforms.uPointScale.value = isMobile ? 9.5 : 16.5;
+      material.uniforms.uPointScale.value = pointScale;
+      render();
     };
     const ro = new ResizeObserver(onResize);
     ro.observe(host);
 
-    const renderFrame = () => {
-      const t = clock.getElapsedTime();
-      pointer.x += (pointer.tx - pointer.x) * 0.045;
-      pointer.y += (pointer.ty - pointer.y) * 0.045;
-      poseAt(t);
-
-      material.uniforms.uLightDir.value
-        .set(0.45 + Math.sin(t * 0.2) * 0.2, 0.72, 0.5 + Math.cos(t * 0.2) * 0.15)
-        .normalize();
-
-      renderer.clear();
-      renderer.render(envScene, envCam);
-      renderer.render(scene, camera);
-    };
-
     const tick = () => {
       frame = requestAnimationFrame(tick);
-      renderFrame();
+      render();
     };
 
-    if (reduce) {
-      poseAt(0.6);
-      renderFrame();
-    } else {
-      tick();
-    }
+    if (animate && !reduce) tick();
+    else render();
 
     return () => {
       cancelAnimationFrame(frame);
@@ -351,11 +352,30 @@ export default function DottedScene({ reduce = false }: { reduce?: boolean | nul
       window.removeEventListener('pointermove', onPointer);
       geometry.dispose();
       material.dispose();
-      envMat.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [reduce]);
+  }, [reduce, pinBleed, animate]);
 
-  return <div ref={hostRef} className="pointer-events-none absolute inset-0 z-[1]" aria-hidden />;
+  return (
+    <div
+      ref={hostRef}
+      className={
+        pinBleed
+          ? 'pointer-events-none absolute inset-x-0 top-0 z-[1] h-[calc(100%+44vh)] md:h-[calc(100%+40vh)]'
+          : 'pointer-events-none absolute inset-0 z-[1]'
+      }
+      style={
+        pinBleed
+          ? {
+              WebkitMaskImage:
+                'linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%)',
+              maskImage:
+                'linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%)',
+            }
+          : undefined
+      }
+      aria-hidden
+    />
+  );
 }

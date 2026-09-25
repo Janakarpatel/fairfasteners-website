@@ -71,7 +71,7 @@ export default function SolutionsWorkSection() {
   );
 
   return (
-    <section className="bg-brand-secondary font-sans text-white">
+    <section className="font-sans text-white">
       <div className="mx-auto w-full max-w-[1600px] px-6 pt-10 pb-16 md:px-8 md:pt-12 md:pb-20 lg:px-10 lg:pt-14 lg:pb-24">
         <motion.div
           initial={reduce ? false : { opacity: 0, y: 18 }}

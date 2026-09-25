@@ -17,7 +17,7 @@ export default function BackNav({ href, label, trailing, className = '' }: BackN
     >
       <Link
         href={href}
-        className="group relative inline-flex items-center gap-1.5 py-2 font-jetbrains text-[0.6875rem] uppercase tracking-[0.12em] text-brand-secondary/70 transition-colors hover:text-brand-secondary motion-reduce:transition-none"
+        className="group relative inline-flex items-center gap-1.5 py-2 font-jetbrains text-[0.6875rem] uppercase tracking-[0.12em] text-white/65 transition-colors hover:text-white motion-reduce:transition-none"
       >
         <ChevronLeft
           className="h-4 w-4 shrink-0 transition-transform group-hover:-translate-x-0.5 motion-reduce:transition-none motion-reduce:group-hover:translate-x-0"

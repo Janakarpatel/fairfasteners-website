@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import type { TeamMember } from '@/lib/team';
+import WorkWithUsSection from '@/components/WorkWithUsSection';
 
 const ease = [0.16, 1, 0.3, 1] as const;
 const TICKS_BETWEEN = 16;
@@ -102,9 +103,10 @@ export default function AboutPageContent({ story, members }: Props) {
   );
 
   return (
-    <main className="bg-brand-secondary font-sans text-white">
+    <main className="relative bg-transparent font-sans text-white">
+      <div className="relative z-10">
       {/* Hero — two-line headline; full image, half visible until scroll */}
-      <section>
+      <section className="relative">
         <div className="mx-auto flex h-[50dvh] w-full max-w-[1600px] flex-col justify-end px-6 pb-8 pt-24 md:px-8 md:pb-10 md:pt-28 lg:px-10">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:items-end lg:gap-16">
             <motion.h1
@@ -438,38 +440,8 @@ export default function AboutPageContent({ story, members }: Props) {
         </ul>
       </section>
 
-      {/* Work with us */}
-      <section className="relative isolate overflow-hidden">
-        <div className="pointer-events-none absolute inset-0" aria-hidden>
-          <Image
-            src="/images/infrastructure.jpg"
-            alt=""
-            fill
-            sizes="100vw"
-            className="object-cover opacity-30 grayscale"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-brand-secondary via-brand-secondary/90 to-brand-primary/40" />
-        </div>
-
-        <div className="relative z-10 mx-auto grid w-full max-w-[1600px] grid-cols-1 gap-8 px-6 py-20 md:grid-cols-2 md:items-end md:gap-16 md:px-8 md:py-24 lg:px-10 lg:py-28">
-          <div>
-            <h2 className="text-[clamp(2rem,4vw,3.25rem)] font-semibold tracking-tight text-white">
-              Work with us
-            </h2>
-            <a
-              href="mailto:info@fairfasteners.com"
-              className="mt-8 inline-flex h-12 w-12 items-center justify-center bg-brand-primary text-white transition-colors hover:bg-brand-primary-hover"
-              aria-label="Get in touch"
-            >
-              <ArrowRight className="h-5 w-5" strokeWidth={2} aria-hidden />
-            </a>
-          </div>
-          <p className="max-w-md text-sm leading-relaxed text-white/65 md:justify-self-end md:text-[0.975rem] md:leading-[1.65]">
-            If you have a fastening challenge where performance, reliability, and documentation
-            are non-negotiable, we would welcome a conversation.
-          </p>
-        </div>
-      </section>
+      <WorkWithUsSection />
+      </div>
     </main>
   );
 }

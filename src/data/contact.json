@@ -15,13 +15,13 @@
   },
   "location": [
     "L-124, G.I.D.C Industrial Estate",
-    "Odhav Road, Ahmedabad 382415"
+    "Road No. 25, Odhav, Ahmedabad 382415"
   ],
   "maps": {
     "lat": 23.0201725,
     "lng": 72.651097,
     "zoom": 17,
-    "placeUrl": "https://www.google.com/maps/place/Fair+Fasteners/@23.0201725,72.651097,18z/data=!4m6!3m5!1s0x395e87224f2283bf:0x3aac947d885b3f20!8m2!3d23.0201725!4d72.651097!16s%2Fg%2F11ff1xz_0h",
-    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=23.0201725,72.651097&travelmode=driving"
+    "placeUrl": "https://www.google.com/maps?cid=4227917417073557280",
+    "directionsUrl": "https://www.google.com/maps/dir/?api=1&destination=Fair+Fasteners,+L-124,+GIDC+Industrial+Estate,+Odhav,+Ahmedabad+382415"
   }
 }

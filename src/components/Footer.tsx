@@ -57,13 +57,13 @@ export default function Footer() {
 
   return (
     <motion.footer
-      className="bg-brand-secondary font-sans text-white"
+      className="relative isolate overflow-hidden bg-transparent font-sans text-white"
       initial={reduce ? false : { opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: reduce ? 0 : 0.65, ease }}
     >
-      <div className="mx-auto w-full max-w-[1600px] px-6 pt-14 md:px-8 md:pt-16 lg:px-10 lg:pt-20">
+      <div className="relative z-10 mx-auto w-full max-w-[1600px] px-6 pt-14 md:px-8 md:pt-16 lg:px-10 lg:pt-20">
         <div className="flex flex-col gap-12 lg:flex-row lg:justify-between lg:gap-16">
           <div className="shrink-0">
             <a href="/" className="inline-block outline-none ring-white/40 focus-visible:ring-2">
