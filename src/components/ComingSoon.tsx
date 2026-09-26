@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { Navigation } from 'lucide-react';
 import gsap from 'gsap';
 import contactData from '@/data/contact.json';
 import AmbientBackground from '@/components/AmbientBackground';
@@ -75,7 +76,7 @@ function ContactHoverLink({
   };
 
   const className =
-    'relative inline-block max-w-full cursor-pointer text-left text-[0.8125rem] text-brand-surface/90 sm:text-sm';
+    'relative inline-block max-w-full cursor-pointer text-left text-[0.8125rem] leading-none text-brand-surface/90 sm:text-sm';
   const hoverProps = {
     className,
     style: { perspective: 600 } as const,
@@ -246,45 +247,72 @@ function LocationMapDialog({
             role="dialog"
             aria-modal="true"
             aria-labelledby="location-map-title"
-            className="relative z-10 max-h-[90dvh] w-full max-w-3xl overflow-y-auto overflow-x-hidden rounded-t-2xl border border-white/15 bg-brand-field shadow-[0_24px_80px_rgba(0,0,0,0.45)] sm:rounded-lg"
+            className="relative z-10 max-h-[90dvh] w-full max-w-3xl overflow-y-auto overflow-x-hidden rounded-t-[var(--dialog-r)] border border-white/15 bg-[#0b3d36] shadow-[0_24px_80px_rgba(0,0,0,0.45)] sm:rounded-[var(--dialog-r)]"
+            style={
+              {
+                /* Outer radius = inner radius + padding */
+                '--dialog-pad': '1rem',
+                '--dialog-inner-r': '0.25rem',
+                '--dialog-r': 'calc(var(--dialog-inner-r) + var(--dialog-pad))',
+              } as CSSProperties
+            }
             initial={{ opacity: reduce ? 1 : 0, y: reduce ? 0 : 16, scale: reduce ? 1 : 0.98 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: reduce ? 1 : 0, y: reduce ? 0 : 10, scale: reduce ? 1 : 0.98 }}
             transition={{ duration: reduce ? 0 : 0.32, ease }}
           >
-            <div className="flex items-start justify-between gap-3 px-4 pb-3 pt-4 sm:gap-4 sm:px-5">
-              <div>
+            <div
+              className="flex items-start justify-between gap-3 pb-3 pt-4"
+              style={{ paddingInline: 'var(--dialog-pad)' }}
+            >
+              <div className="min-w-0">
                 <p
                   id="location-map-title"
-                  className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-brand-surface/50"
+                  className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-brand-surface/45"
                 >
                   Location
                 </p>
-                <p className="mt-1 text-sm leading-snug text-brand-surface">Fair Fasteners</p>
-                {contactData.location.map((line) => (
-                  <p key={line} className="text-sm leading-snug text-brand-surface/70 sm:whitespace-nowrap">
-                    {line}
-                  </p>
-                ))}
+                <div className="mt-2 leading-snug">
+                  <p className="text-[0.8125rem] text-brand-surface sm:text-sm">Fair Fasteners</p>
+                  {contactData.location.map((line) => (
+                    <p
+                      key={line}
+                      className="text-[0.8125rem] text-brand-surface/70 sm:whitespace-nowrap sm:text-sm"
+                    >
+                      {line}
+                    </p>
+                  ))}
+                </div>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="shrink-0 rounded-md border border-white/25 px-3 py-1.5 text-sm text-brand-surface/80 hover:border-white hover:text-white sm:px-4 sm:py-2"
+                className="shrink-0 border border-white/25 px-3 py-1.5 text-sm text-brand-surface/80 hover:border-white hover:text-white sm:px-4 sm:py-2"
+                style={{ borderRadius: 'var(--dialog-inner-r)' }}
               >
                 Close
               </button>
             </div>
-            <div className="aspect-[4/3] w-full overflow-hidden bg-[#d9e2dc] sm:aspect-[2/1]">
-              <LogoPinMap />
+            <div style={{ paddingInline: 'var(--dialog-pad)' }}>
+              <div
+                className="aspect-[4/3] w-full overflow-hidden bg-[#d9e2dc] sm:aspect-[2/1]"
+                style={{ borderRadius: 'var(--dialog-inner-r)' }}
+              >
+                <LogoPinMap />
+              </div>
             </div>
-            <div className="flex items-center justify-center gap-2 px-4 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:justify-start sm:px-5 sm:pb-4">
+            <div
+              className="flex items-center justify-center gap-2 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:justify-start sm:pb-4"
+              style={{ paddingInline: 'var(--dialog-pad)' }}
+            >
               <a
                 href={contactData.maps.directionsUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-11 w-full items-center justify-center rounded-md bg-brand-surface px-4 py-2.5 text-sm text-brand-secondary hover:bg-white sm:min-h-0 sm:w-auto sm:py-2"
+                className="inline-flex min-h-11 w-full items-center justify-center gap-2 bg-brand-surface px-4 py-2.5 text-sm text-brand-secondary hover:bg-white sm:min-h-0 sm:w-auto sm:py-2"
+                style={{ borderRadius: 'var(--dialog-inner-r)' }}
               >
+                <Navigation className="h-4 w-4 shrink-0" aria-hidden strokeWidth={2} />
                 Directions
               </a>
             </div>
@@ -309,11 +337,11 @@ export default function ComingSoon() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reduce ? 0 : 0.7, ease }}
       >
-        <div className="mx-auto flex h-14 w-full max-w-[1600px] items-center justify-between px-4 md:h-20 md:px-8 lg:px-10">
+        <div className="mx-auto flex h-12 w-full max-w-[1600px] items-center justify-between px-5 md:h-20 md:px-8 lg:px-10">
           <img
             src="/company_logo.png"
             alt="Fair Fasteners"
-            className="h-6 w-auto object-contain md:h-7"
+            className="h-5 w-auto object-contain md:h-7"
           />
           <p className="font-mono text-[0.55rem] uppercase tracking-[0.16em] text-brand-surface/45 md:text-[0.6rem]">
             since 1974
@@ -322,7 +350,7 @@ export default function ComingSoon() {
       </motion.header>
 
       <motion.div
-        className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-end px-4 pb-[max(3.25rem,calc(env(safe-area-inset-bottom)+2.5rem))] pt-6 md:px-8 md:pb-14 md:pt-8 lg:px-10"
+        className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-1 flex-col justify-end px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-4 md:px-8 md:pb-14 md:pt-8 lg:px-10"
         initial="hidden"
         animate="visible"
         variants={{
@@ -350,7 +378,7 @@ export default function ComingSoon() {
         </motion.p>
 
         <motion.h1
-          className="mt-2 max-w-4xl text-[clamp(1.85rem,8.2vw,5.5rem)] leading-[1.02] tracking-tighter text-brand-surface md:mt-3 md:leading-[0.98]"
+          className="mt-2 text-[clamp(2rem,9.5vw,5.5rem)] leading-[1.05] tracking-tighter text-brand-surface md:mt-3 md:leading-[0.98]"
           variants={{
             hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 22 },
             visible: {
@@ -366,7 +394,7 @@ export default function ComingSoon() {
         </motion.h1>
 
         <motion.p
-          className="mt-4 text-[0.8125rem] font-light leading-relaxed text-brand-surface/75 md:mt-5 md:text-base md:leading-snug"
+          className="mt-4 max-w-[34ch] text-[0.8125rem] font-light leading-relaxed text-brand-surface/75 sm:max-w-xl md:mt-5 md:max-w-none md:text-base md:leading-snug"
           variants={{
             hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 16 },
             visible: {
@@ -377,13 +405,13 @@ export default function ComingSoon() {
           }}
         >
           <span className="block md:whitespace-nowrap">Apologies the site is still taking shape.</span>
-          <span className="block md:whitespace-nowrap">
+          <span className="mt-1 block md:mt-0 md:whitespace-nowrap">
             Specs, quotes, sales, and supply are open, write or call, we&apos;re here at your service.
           </span>
         </motion.p>
 
         <motion.div
-          className="mt-8 grid grid-cols-1 border-t border-white/15 pt-6 sm:max-w-5xl sm:grid-cols-[auto_auto_max-content] sm:gap-x-6 sm:gap-y-4 sm:pt-6"
+          className="mt-7 grid grid-cols-1 gap-6 border-t border-white/15 pt-5 md:mt-8 md:max-w-5xl md:grid-cols-[auto_auto_max-content] md:gap-x-8 md:gap-y-4 md:pt-6"
           variants={{
             hidden: { opacity: reduce ? 1 : 0, y: reduce ? 0 : 14 },
             visible: {
@@ -397,7 +425,7 @@ export default function ComingSoon() {
             <p className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-brand-surface/45">
               Phone
             </p>
-            <div className="mt-2 flex flex-col gap-1.5">
+            <div className="mt-2 flex flex-col gap-1.5 leading-none">
               {contactData.phones.map((phone) => (
                 <ContactHoverLink
                   key={phone.href}
@@ -412,7 +440,7 @@ export default function ComingSoon() {
             <p className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-brand-surface/45">
               Email
             </p>
-            <div className="mt-2">
+            <div className="mt-2 flex flex-col leading-none">
               <ContactHoverLink
                 href={contactData.email.href}
                 label={contactData.email.label}
@@ -420,11 +448,11 @@ export default function ComingSoon() {
               />
             </div>
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-brand-surface/45">
               Location
             </p>
-            <div className="mt-2">
+            <div className="mt-2 leading-none">
               <LocationHoverButton
                 lines={contactData.location}
                 reduce={reduce}
@@ -433,6 +461,15 @@ export default function ComingSoon() {
             </div>
           </div>
         </motion.div>
+
+        <a
+          href="https://janakarpatel.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-8 self-end text-[9px] leading-none text-brand-surface/40 hover:text-brand-surface md:hidden"
+        >
+          Designed by Janakar Patel
+        </a>
       </motion.div>
 
       <LocationMapDialog
@@ -445,7 +482,7 @@ export default function ComingSoon() {
         href="https://janakarpatel.vercel.app/"
         target="_blank"
         rel="noopener noreferrer"
-        className="absolute bottom-[max(0.65rem,env(safe-area-inset-bottom))] right-4 z-20 text-[9px] leading-none text-brand-surface/40 hover:text-brand-surface md:bottom-6 md:right-8 md:text-[11px] lg:right-10"
+        className="absolute bottom-6 right-8 z-20 hidden text-[11px] leading-none text-brand-surface/40 hover:text-brand-surface md:block lg:right-10"
       >
         Designed by Janakar Patel
       </a>
