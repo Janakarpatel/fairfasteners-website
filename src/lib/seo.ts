@@ -32,6 +32,9 @@ export const rootMetadata: Metadata = {
   applicationName: siteName,
   authors: [{ name: siteName }],
   creator: siteName,
+  icons: {
+    icon: [{ url: '/favicon.ico', type: 'image/x-icon' }],
+  },
   keywords: [
     'Fair Fasteners',
     'industrial fasteners',
